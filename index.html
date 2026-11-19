@@ -1,0 +1,3055 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Splunk Flyaway Kit - Documentation</title>
+<style>
+:root{
+  --bg:#0f1419; --bg-2:#161c24; --bg-3:#1d2531; --panel:#131922;
+  --fg:#d7dee8; --fg-dim:#8b97a7; --fg-faint:#5f6b7a;
+  --accent:#f99d1c; --accent-2:#65c3ba; --border:#273140;
+  --code-bg:#0b0f14; --mark:#f99d1c55; --link:#6fb3ff;
+  --shadow:0 6px 24px rgba(0,0,0,.35);
+}
+html[data-theme="light"]{
+  --bg:#f5f7fa; --bg-2:#ffffff; --bg-3:#eef2f7; --panel:#ffffff;
+  --fg:#1f2733; --fg-dim:#56627180; --fg-dim:#596577; --fg-faint:#8a94a3;
+  --accent:#d97706; --accent-2:#0f766e; --border:#dde3ea;
+  --code-bg:#f0f3f7; --mark:#fde68a; --link:#1d4ed8;
+  --shadow:0 6px 24px rgba(20,30,50,.12);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;display:flex;flex-direction:column}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Header */
+header{display:flex;align-items:center;gap:14px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30;flex:0 0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px}
+.brand .dot{width:11px;height:11px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+.brand small{font-weight:500;color:var(--fg-dim)}
+header .spacer{flex:1}
+.btn{background:var(--bg-3);color:var(--fg);border:1px solid var(--border);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:7px}
+.btn:hover{border-color:var(--accent)}
+.hamburger{display:none}
+
+/* Layout */
+.layout{display:flex;flex:1;min-height:0}
+nav.sidebar{width:290px;flex:0 0 290px;background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;padding:14px 10px 40px}
+.search-wrap{position:relative;margin:4px 6px 12px}
+#search{width:100%;padding:9px 30px 9px 11px;border-radius:9px;border:1px solid var(--border);background:var(--bg-3);color:var(--fg);font-size:13px}
+#search:focus{outline:none;border-color:var(--accent)}
+.search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--fg-faint);border:none;background:none;font-size:16px;display:none}
+.nav-group-label{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--fg-faint);margin:14px 10px 6px}
+.nav-item{display:block;padding:7px 11px;border-radius:8px;color:var(--fg-dim);cursor:pointer;font-size:13.5px;border-left:2px solid transparent}
+.nav-item:hover{background:var(--bg-3);color:var(--fg);text-decoration:none}
+.nav-item.active{background:var(--bg-3);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-item.hidden{display:none}
+.nav-sub{margin:1px 0 4px 8px;border-left:1px solid var(--border);padding-left:4px}
+.nav-sub a{display:block;padding:4px 10px;font-size:12.5px;color:var(--fg-faint);border-radius:6px}
+.nav-sub a:hover{color:var(--fg);background:var(--bg-3);text-decoration:none}
+.nav-sub a.h3{padding-left:22px;font-size:12px}
+.no-results{color:var(--fg-faint);font-size:13px;padding:10px 12px;display:none}
+
+/* Content */
+main{flex:1;overflow-y:auto;scroll-behavior:smooth}
+.content{max-width:900px;margin:0 auto;padding:30px 40px 120px}
+.content h1{font-size:30px;margin:.2em 0 .6em;line-height:1.2;border-bottom:1px solid var(--border);padding-bottom:.3em}
+.content h2{font-size:22px;margin:1.6em 0 .5em;padding-top:.2em}
+.content h3{font-size:17px;margin:1.3em 0 .4em}
+.content h4{font-size:15px;margin:1.1em 0 .3em;color:var(--fg-dim)}
+.content h2,.content h3,.content h4{scroll-margin-top:72px}
+.anchor-link{opacity:0;margin-left:8px;font-size:.7em;color:var(--fg-faint);text-decoration:none}
+h2:hover .anchor-link,h3:hover .anchor-link{opacity:1}
+.content p{margin:.7em 0}
+.content ul,.content ol{margin:.6em 0;padding-left:1.5em}
+.content li{margin:.25em 0}
+.content li.task{list-style:none;margin-left:-1.3em}
+.content li.task input{margin-right:8px}
+.content blockquote{margin:1em 0;padding:.6em 1em;border-left:3px solid var(--accent);background:var(--bg-3);border-radius:0 8px 8px 0;color:var(--fg)}
+.content blockquote p{margin:.3em 0}
+.content code{background:var(--code-bg);padding:.12em .4em;border-radius:5px;font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:.88em;border:1px solid var(--border)}
+.content pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow-x:auto;position:relative;margin:1em 0}
+.content pre code{background:none;border:none;padding:0;font-size:13px;line-height:1.5}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--bg-3);border:1px solid var(--border);color:var(--fg-dim);border-radius:6px;padding:3px 9px;font-size:11px;cursor:pointer;opacity:0;transition:opacity .15s}
+pre:hover .copy-btn{opacity:1}
+.copy-btn.copied{color:var(--accent-2);border-color:var(--accent-2)}
+.table-wrap{overflow-x:auto;margin:1em 0}
+.content table{border-collapse:collapse;width:100%;font-size:13.5px}
+.content th,.content td{border:1px solid var(--border);padding:7px 11px;text-align:left;vertical-align:top}
+.content th{background:var(--bg-3);font-weight:600}
+.content tr:nth-child(even) td{background:var(--bg-2)}
+.content hr{border:none;border-top:1px solid var(--border);margin:1.8em 0}
+.mermaid{background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:16px;margin:1em 0;text-align:center;overflow-x:auto}
+.mermaid:not([data-processed]){font-family:monospace;font-size:12.5px;text-align:left;white-space:pre;color:var(--fg-dim)}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
+
+/* Doc footer nav */
+.doc-nav{display:flex;justify-content:space-between;gap:12px;margin-top:50px;border-top:1px solid var(--border);padding-top:20px}
+.doc-nav a{flex:1;padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:var(--panel)}
+.doc-nav a:hover{border-color:var(--accent);text-decoration:none}
+.doc-nav .lbl{display:block;font-size:11px;color:var(--fg-faint);text-transform:uppercase;letter-spacing:.07em}
+.doc-nav .ttl{display:block;color:var(--fg);font-weight:600;margin-top:3px}
+.doc-nav .next{text-align:right}
+.doc-nav a.disabled{visibility:hidden}
+
+/* Overlay for mobile */
+.scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:25}
+@media(max-width:900px){
+  .hamburger{display:inline-flex}
+  nav.sidebar{position:fixed;left:0;top:0;bottom:0;z-index:28;transform:translateX(-100%);transition:transform .2s;padding-top:60px}
+  nav.sidebar.open{transform:translateX(0);box-shadow:var(--shadow)}
+  .scrim.show{display:block}
+  .content{padding:22px 18px 100px}
+}
+.kit-footnote{color:var(--fg-faint);font-size:12px;margin-top:40px;border-top:1px solid var(--border);padding-top:14px}
+</style>
+</head>
+<body>
+<header>
+  <button class="btn hamburger" id="menuBtn" aria-label="Menu">&#9776;</button>
+  <div class="brand"><span class="dot"></span>Splunk Flyaway Kit <small>Documentation</small></div>
+  <div class="spacer"></div>
+  <button class="btn" id="printBtn" title="Print current page">Print</button>
+  <button class="btn" id="themeBtn" title="Toggle theme">Theme</button>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="Search the docs..." autocomplete="off">
+      <button class="search-clear" id="searchClear" aria-label="Clear">&times;</button>
+    </div>
+    <div id="navList"></div>
+    <div class="no-results" id="noResults">No documents match your search.</div>
+  </nav>
+  <div class="scrim" id="scrim"></div>
+  <main id="main">
+    <article class="content" id="content"></article>
+  </main>
+</div>
+
+<script type="text/markdown" data-id="readme" data-title="Overview" data-group="Start here" data-file="README.md">
+# Splunk Flyaway Kit
+
+A portable, rapidly deployable Splunk Enterprise environment built from ruggedized
+laptops and small-form-factor desktop PCs running Linux. The kit is designed to be
+carried to a site, powered on, networked, and ingesting data within a short, repeatable
+window - whether the site has internet access or is fully air-gapped.
+
+This repository is **documentation only**. It is the design, bill of materials, network
+plan, build standard, deployment runbooks, and operational procedures for assembling and
+operating the kit. It contains no automation or OS images (see
+[Out of scope](#out-of-scope)), but the runbooks carry copy-paste configuration snippets
+so they can be acted on directly.
+
+## Missions
+
+The kit is general-purpose and sized to cover three mission profiles (see
+[docs/12-mission-profiles.md](docs/12-mission-profiles.md)):
+
+- **Incident response / DFIR** - stand up a collection and analysis platform at a
+  customer or field site, with evidence handling and chain-of-custody discipline.
+- **Tactical / disconnected operations** - monitoring in environments with little or no
+  connectivity (field, disaster response, exercise).
+- **Demo / training / workshop** - a self-contained teaching or proof-of-value
+  environment.
+
+## Tiers
+
+The kit comes in three sizes. Pick the smallest tier that meets the daily ingest and
+retention requirement.
+
+| Tier | Kit Hosts | Daily ingest | Indexing | Search | Use when |
+| --- | --- | --- | --- | --- | --- |
+| **Small** | ~4-6 | < 50 GB/day | 1 standalone indexer OR 2-node index cluster | Single ES search head | One-off IR, small site, demo |
+| **Medium** | ~7-10 | 50-300 GB/day | 2-node indexer cluster (RF=2, SF=2) | ES search head + optional ad-hoc SH | Most field deployments |
+| **Large** | 12+ | 300 GB+/day | 4-6 node indexer cluster | 3-member ES search head cluster + deployer | High-volume or long-retention missions |
+
+All tiers run the same software baseline (Splunk Enterprise 10.6, SOAR On-premises 8.7)
+and differ only in node count and role distribution. See
+[docs/01-architecture.md](docs/01-architecture.md).
+
+## Connectivity modes
+
+Every procedure supports both:
+
+- **Air-gapped** - all installers, OS packages, apps, add-ons, licenses, and checksums
+  are carried on the kit's offline media. No internet required. See
+  [docs/06-offline-repo.md](docs/06-offline-repo.md).
+- **Connected / intermittent** - optional online updates and optional remote data
+  replication over a site-to-site VPN or a self-hosted Headscale mesh. See
+  [docs/14-remote-replication-vpn.md](docs/14-remote-replication-vpn.md).
+
+## Document map
+
+| Doc | Contents |
+|-----|----------|
+| [docs/01-architecture.md](docs/01-architecture.md) | Roles, per-tier topologies, sizing math, optional AI server |
+| [docs/02-hardware-bom.md](docs/02-hardware-bom.md) | Bill of materials per tier: compute, storage, Cisco/Meraki network gear, firewall, UPS, cases; power and weight budget |
+| [docs/03-network-design.md](docs/03-network-design.md) | Switch tiers (1 GbE min / 10 GbE recommended), VLANs, IP plan, ports matrix, DNS/DHCP/NTP, firewall policy |
+| [docs/04-os-baseline.md](docs/04-os-baseline.md) | Linux build standard; SOAR OS constraints |
+| [docs/05-splunk-deployment.md](docs/05-splunk-deployment.md) | Per-tier install order and role configs; management colocation; ES and SOAR integration |
+| [docs/06-offline-repo.md](docs/06-offline-repo.md) | Building and refreshing offline media; connected-mode policy |
+| [docs/07-containerization.md](docs/07-containerization.md) | Optional Docker/Podman deployment; role consolidation; management tools; SOAR exception |
+| [docs/08-runbook-deploy.md](docs/08-runbook-deploy.md) | Rapid on-site deployment checklist with a time target |
+| [docs/09-runbook-operations.md](docs/09-runbook-operations.md) | Monitoring, health checks, degraded-mode operation |
+| [docs/10-runbook-teardown.md](docs/10-runbook-teardown.md) | Data export, evidence handoff, secure wipe, repack |
+| [docs/11-security.md](docs/11-security.md) | Hardening, TLS, VPN keys, credentials, data classification |
+| [docs/12-mission-profiles.md](docs/12-mission-profiles.md) | IR, tactical, and demo/training profiles |
+| [docs/13-site-integration.md](docs/13-site-integration.md) | Connecting to the org network; site questionnaire; ingestion paths and required firewall rules |
+| [docs/14-remote-replication-vpn.md](docs/14-remote-replication-vpn.md) | Site-to-site IPsec, Headscale, data mirroring options |
+| [docs/15-flyaway-kit-app-concept.md](docs/15-flyaway-kit-app-concept.md) | Conceptual data-source onboarding/checklist app (not built) |
+| [docs/appendix-checklists.md](docs/appendix-checklists.md) | Printable pre-departure, arrival, and teardown checklists |
+
+## Software baseline
+
+| Component | Version | Notes |
+| --- | --- | --- |
+| Splunk Enterprise | 10.6 | Pin the exact build in the kit manifest |
+| Splunk Universal Forwarder | 10.x (match Enterprise) | SOAR 8.7 bundles UF 10.4.1 |
+| Splunk Enterprise Security* | Current supported with 10.6 | Dedicated search head.  Agentic SOC agents do not work air-gapped without the Splunk AI tier. |
+| Splunk SOAR (On-premises) | 8.7 | RHEL/Oracle/Amazon Linux only; not Ubuntu; not containerized |
+| OS - Splunk roles | Rocky Linux 9 / RHEL 9 (primary), Ubuntu 24.04 LTS (alt) | See [docs/04-os-baseline.md](docs/04-os-baseline.md) |
+| OS - SOAR role | RHEL 9.7+ / Rocky 9.7+ / Oracle Linux 9 | SOAR does not support Ubuntu |
+
+> Information in this document is current as of November, 2026.
+> Re-verify against [help.splunk.com](https://help.splunk.com) and pin exact builds in the
+> manifest before each kit build. Cisco and Meraki model numbers are references.
+
+## Out of scope
+
+- Configuration automation (Ansible, shell). The docs mark where it would slot in.
+- Golden images and unattended installers (kickstart / autoinstall).
+- Building the Flyaway Kit onboarding app ([docs/15-flyaway-kit-app-concept.md](docs/15-flyaway-kit-app-concept.md) is a concept only).
+
+</script>
+<script type="text/markdown" data-id="01-architecture" data-title="01 - Architecture" data-group="Design" data-file="docs/01-architecture.md">
+# 01 - Architecture
+
+This document defines the Splunk roles in the kit, how they map to physical hardware
+(laptops and desktops), the per-tier topologies, and the sizing math used to choose a
+tier.
+
+## Design principles
+
+- **Smallest thing that works.** Pick the lowest tier that meets daily ingest and
+  retention. Every added node is more weight, power, setup time, and failure surface.
+- **Desktops index, laptops manage and search.** Desktops carry the CPU and NVMe needed
+  for indexing and replication. Laptops run search, management, and ingest roles - they
+  are portable and each has a built-in UPS (its battery) that rides out power blips.
+- **Repeatable role assignment.** The same hostname/role map is used every deployment so
+  the runbooks, configs, and the IP plan never change between missions.
+- **Honest colocation.** Where kit constraints push roles onto one host, the deviation
+  from Splunk's reference guidance is called out explicitly (see
+  [Management role colocation](#management-role-colocation)).
+
+## Roles
+
+All roles sit on the kit LAN (see [03-network-design.md](03-network-design.md)) and are
+networked together through the kit switch and firewall.
+
+| Role | Purpose | Typical host |
+|------|---------|--------------|
+| **ES search head** | Splunk Enterprise Security - the analyst UI, correlation searches, notables, data models | Laptop (dedicated) |
+| **Ad-hoc search head** | Non-ES searching, hunting, dashboards (optional) | Laptop |
+| **Indexer** | Parse, index, store, and search data | Desktop (NVMe) |
+| **Cluster manager (CM)** | Coordinates the indexer cluster (Medium/Large only) | Laptop / mgmt host |
+| **License manager (LM)** | Central license repository | Mgmt host |
+| **Deployment server (DS)** | Pushes apps/TAs to forwarders and other clients | Mgmt host |
+| **Monitoring console (MC)** | Health of the whole deployment | Mgmt host |
+| **SH cluster deployer** | Pushes config to ES SH cluster members (Large only) | Mgmt host |
+| **HEC / token management** | HTTP Event Collector endpoint and token admin | Ingest/HF host |
+| **Heavy forwarder (HF)** | Modular/API inputs, routing, the dual-homed site touchpoint | Laptop/desktop |
+| **SC4S** | Splunk Connect for Syslog (containerized syslog ingest) | Ingest host |
+| **SOAR** | Splunk SOAR On-premises - automation/playbooks | Desktop (RHEL-family) |
+| **AI server** (optional) | AI harness (local or subscription) wired to the Splunk MCP server - see [AI server](#ai-server-optional) | Simple PC or laptop |
+| **Kit services** | DNS, DHCP (kit LAN), NTP (chrony) | Mgmt host |
+
+### Management role colocation
+
+Splunk's reference guidance on combining management components
+([Components that help to manage your deployment](https://help.splunk.com/en/splunk-enterprise/administer/distributed-deployment-manual/10.6/overview-of-splunk-enterprise-distributed-deployments/components-that-help-to-manage-your-deployment))
+gives this colocation matrix:
+
+| Component | LM | MC | DS | CM | Deployer | Indexer | Search head |
+|-----------|----|----|----|----|----------|---------|-------------|
+| License manager | - | yes | yes | yes | yes | yes | yes |
+| Monitoring console | yes | - | yes | yes | yes | **no** | yes |
+| Deployment server | yes | yes | - | **no** | yes | yes | yes |
+| Cluster manager | yes | yes | **no** | - | yes | **no** | **no** |
+| SH cluster deployer | yes | yes | yes | yes | - | **no** | **no** |
+
+The hard rules that affect this kit:
+
+- **Cluster manager must not share a host with the deployment server, an indexer, or a
+  search head.** Both CM and DS have strict resource limits.
+- **Monitoring console must not share a host with an indexer.** With SmartStore it needs a
+  dedicated search head; the kit does not use SmartStore.
+
+Consequences per tier:
+
+- **Small** has no indexer cluster, so there is no CM. LM + DS + MC + DNS/DHCP/NTP can
+  share one management laptop because the client count and search load are tiny (MC on a
+  DS is supported for < 50 clients).
+- **Medium/Large** have a cluster, so the CM must be separate from the DS. The management
+  roles split across two hosts (see topologies below).
+
+> In Small and in low-load Medium kits we co-locate more management roles on
+> one box than the reference architecture prefers. The ceiling is host CPU/RAM and the
+> < 50 deployment-client limit for MC-on-DS. Upgrade path: promote to the Large
+> two-management-host split, or add a dedicated MC laptop, if the MC or DS shows load in
+> the monitoring console.
+
+Colocation can also be done with **containers** - each role in its own Docker/Podman
+container on a shared host - which is often the fastest way to consolidate the management
+roles. The same resource ceilings apply at the host level. See
+[07-containerization.md](07-containerization.md).
+
+## Reference topology (all tiers)
+
+```mermaid
+flowchart LR
+    orgNet[OrgNetwork] -->|"site-facing VLAN"| fw[KitFirewall]
+    fw --> ingest["Ingest: HF / SC4S / HEC"]
+    remote["Remote DC or Cloud"] <-->|"IPsec or Headscale WireGuard"| fw
+    subgraph kitLan [Kit LAN - 10GbE switch]
+        ingest --> idx[IndexerTier]
+        esSh[ES_SearchHead] --> idx
+        soar[SOAR] <--> esSh
+        ai[AI_Server] <--> esSh
+        mgmt["Mgmt: LM, CM, DS, MC, DNS, DHCP, NTP, Tokens"] -.-> idx
+        mgmt -.-> esSh
+        mgmt -.-> ingest
+    end
+    fw --> kitLan
+```
+
+## Small tier
+
+4-6 hosts, < 50 GB/day, single analyst or small team, short retention.
+
+| Host | Role(s) | Hardware |
+|------|---------|----------|
+| mgmt01 | LM + DS + MC + DNS/DHCP/NTP + HEC token admin | Laptop |
+| es01 | ES search head (also runs ad-hoc search) | Laptop |
+| idx01 | Standalone indexer | Desktop |
+| idx02 | Standalone indexer (optional, for capacity/redundancy) | Desktop |
+| hf01 | Heavy forwarder + SC4S (site touchpoint) | Laptop/desktop |
+| soar01 | SOAR (optional) | Desktop (RHEL-family) |
+
+```mermaid
+flowchart TD
+    hf01["hf01: HF + SC4S"] --> idx01[idx01]
+    hf01 --> idx02[idx02]
+    es01["es01: ES SH"] --> idx01
+    es01 --> idx02
+    mgmt01["mgmt01: LM+DS+MC+DNS/DHCP/NTP"] -.-> idx01
+    mgmt01 -.-> idx02
+    mgmt01 -.-> es01
+    soar01[soar01: SOAR optional] <--> es01
+```
+
+Notes:
+- Indexers are **standalone** (no cluster). Two indexers means no replication - if one
+  dies, its data is unavailable until restored. If you need survivability at this size,
+  step up to Medium.
+- `es01` forwards its own internal logs to the indexers and does not index data locally.
+
+## Medium tier
+
+7-10 hosts, 50-300 GB/day. This is the default field deployment.
+
+| Host | Role(s) | Hardware |
+|------|---------|----------|
+| mgmt01 | CM + LM + MC | Laptop |
+| mgmt02 | DS + DNS + DHCP + NTP | Laptop |
+| es01 | ES search head | Laptop |
+| sh01 | Ad-hoc search head (optional) | Laptop |
+| idx01-03 | Indexer cluster peers (RF=2, SF=2) | Desktop x3 |
+| hf01 | Heavy forwarder + HEC | Laptop/desktop |
+| sc4s01 | SC4S syslog ingest | Laptop/desktop |
+| soar01 | SOAR | Desktop (RHEL-family) |
+| ai01 | AI server (optional) | Simple PC/laptop |
+
+```mermaid
+flowchart TD
+    subgraph ingestTier [Ingest]
+        hf01["hf01: HF + HEC"]
+        sc4s01["sc4s01: SC4S"]
+    end
+    subgraph idxCluster ["Indexer cluster RF=2 SF=2"]
+        idx01[idx01]
+        idx02[idx02]
+        idx03[idx03]
+    end
+    hf01 --> idxCluster
+    sc4s01 --> idxCluster
+    es01["es01: ES SH"] --> idxCluster
+    sh01["sh01: ad-hoc SH"] --> idxCluster
+    mgmt01["mgmt01: CM+LM+MC"] --> idxCluster
+    mgmt02["mgmt02: DS+DNS+DHCP+NTP"] -.-> hf01
+    mgmt02 -.-> es01
+    soar01[soar01: SOAR] <--> es01
+    ai01[ai01: AI server] <--> es01
+```
+
+
+> Notes:
+>
+> - RF=2/SF=2 means each bucket has 2 copies and the cluster can lose **one** indexer with
+> no data loss and full searchability. See [09-runbook-operations.md](09-runbook-operations.md)
+> for degraded-mode behavior.
+>
+> - CM is isolated from DS per the colocation rules above.
+
+## Large tier
+
+12+ hosts, 300 GB+/day, longer retention, multiple analysts.
+
+| Host | Role(s) | Hardware |
+|------|---------|----------|
+| mgmt01 | CM + LM + MC | Laptop/desktop |
+| mgmt02 | DS + ES SH cluster deployer + DNS + DHCP + NTP | Laptop/desktop |
+| es01-03 | ES search head cluster members | Laptop x3 |
+| idx01-06 | Indexer cluster peers (RF=2/3, SF=2) | Desktop x4-6 |
+| hf01-02 | Heavy forwarders + HEC | Laptop/desktop x2 |
+| sc4s01 | SC4S syslog ingest | Laptop/desktop |
+| soar01 | SOAR (cluster-capable) | Desktop (RHEL-family) |
+| ai01 | AI server (optional) | Simple PC/laptop |
+
+```mermaid
+flowchart TD
+    subgraph ingestTier [Ingest]
+        hf["hf01-02: HF + HEC"]
+        sc4s[sc4s01: SC4S]
+    end
+    subgraph idxCluster ["Indexer cluster 4-6 peers"]
+        idxA[idx01..06]
+    end
+    subgraph shc ["ES SH cluster"]
+        es1[es01]
+        es2[es02]
+        es3[es03]
+    end
+    hf --> idxCluster
+    sc4s --> idxCluster
+    shc --> idxCluster
+    mgmt01["mgmt01: CM+LM+MC"] --> idxCluster
+    mgmt02["mgmt02: DS+Deployer+DNS/DHCP/NTP"] -.-> shc
+    mgmt02 -.-> hf
+    soar01[soar01: SOAR] <--> shc
+    ai01[ai01: AI server] <--> shc
+```
+
+
+> Notes:
+>
+> - The deployer (for the ES SH cluster) and the DS can colocate; neither colocates with
+> the CM.
+>
+> - The ES SH cluster needs an odd number of members (3 shown) for its captain election.
+
+## Sizing math
+
+Use these to pick a tier and count indexers. They are planning estimates - validate in
+the monitoring console once data flows.
+
+**Indexer count (indexing workload)**
+A reference indexer handles roughly 100-300 GB/day depending on parsing cost, search
+concurrency, and hardware. For kit desktops (fast NVMe, 8+ physical cores), plan on
+**~100 GB/day/indexer** sustained with headroom for search:
+
+```
+indexers = ceil(daily_ingest_GB / 100)        # standalone
+indexers = ceil((daily_ingest_GB / 100) + 1)  # clustered, +1 so RF/SF survive one loss
+```
+
+**Storage per indexer**
+
+```
+raw_per_day          = daily_ingest_GB
+indexed_size_per_day = daily_ingest_GB * 0.5   # rawdata ~15% + tsidx ~35% ~= ~50% of raw (rule of thumb; varies by data)
+cluster_multiplier   = RF (e.g. 2)             # clustered only; standalone = 1
+total_storage_GB     = indexed_size_per_day * retention_days * cluster_multiplier / indexer_count
+```
+
+Example:
+200 GB/day, 30-day retention, 3 indexers, RF=2:
+`200 * 0.5 * 30 * 2 / 3 = 2000 GB/indexer` -> provision ~2.5 TB NVMe/indexer.
+
+**RAM / CPU**
+Follow Splunk reference hardware: a mid-range indexer is ~12 physical cores / 12 GB RAM
+minimum; search heads benefit from more RAM. ES search heads and SOAR want 64 GB+.
+See [02-hardware-bom.md](02-hardware-bom.md) for the concrete per-tier specs.
+
+## AI Server (optional)
+
+The AI server is an **optional** add-on, reserved as `ai01` in every topology and in the
+network/IP plan ([03](03-network-design.md)). It is not required to operate the kit; add
+it when the mission wants AI-assisted analysis or SPL help on top of Splunk.
+
+It is deliberately modest hardware - **a simple PC or laptop**, not a GPU box - because the
+heavy lifting is done either by a local lightweight harness or by a remote
+subscription/private service. The AI server's job is to run an **AI harness** and connect
+it to Splunk through the **[Splunk MCP server](https://www.splunk.com/)** (Model Context
+Protocol), so the agent can query Splunk and reason over results as well as establish connections to cloud-based or self-hosted AI models.
+
+AI harnesses can be installed on this host for remote access by cyber security analysts.
+
+#### Self-hosted AI Models
+
+For locally and remotely hosted AI models, high-end Nvidia or AMD GPUs maybe used to host LLMs.  Linux OS distributions and LLM inference engines such as vllm or SGlang are recommended for performance and parallel inferencing jobs for air-gapped environments or organizations that do not allow remote AI services such as OpenAI, Anthropic, Google, xAI, etc.
+
+This can also be hosted in a remote co-location, data center or office for faster and less expensive deployment purposes; access via VPN or TLS/SSL.
+
+Depending upon the need for self-hosted AI, the AI hardware may be included as an additional asset.  Current open-weight LLMs can run on PCIe AI GPU cards such as the Nvidia RTX Pro 6000 - 96GB VRAM or AMD Instinct MI350P - 144GB VRAM.   Desktop-grade AMD or Intel CPUs and at least 64GB of DDR5 RAM and 2TB+ of storage will suffice.
+
+Higher end server-grade CPUs and GPUs may be used, but carries the risk of weight and cost.
+
+**<u>IMPORTANT</u>**: As of November 2026, Splunk AI Assistant and Enterprise Security AI Agent functions cannot connect or use self-hosted AI services.
+
+There are no recommended open weight models in this document.  Individual, self-testing is required.
+
+#### Self-hosted Splunk AI
+
+Splunk provides [Splunk AI Operator](https://github.com/splunk/splunk-ai-operator) and [Splunk AI Tier](https://github.com/splunk/splunk-ai-operator/blob/release/v1.0/docs/ai-tier-docs/k0s-quick-reference.md) to host Splunk AI infrastructure that allows Splunk AI Assistant (SAIA) and Splunk Enterprise Security Agentic SOC features to run without Splunk AI Cloud service.
+
+Due to the hardware requirements, it is recommended to host this remotely, accessible with a VPN connection or TLS SSL connection from the locally deployed Splunk hosts.
+
+**<u>IMPORTANT:</u>** Splunk AI capabilities are limited to Splunk AI Assistant and Enterprise Security AI Agent functions.  One cannot have general conversations or ask questions or make requests outside of the strict guardrails in place.
+
+For AI chat use cases outside of Splunk AI, use self-hosted AI service and/or cloud-based AI services.
+
+#### Cloud-based AI Service Integration
+
+Leveraging AI subscriptions such as OpenAI, Anthropic, Google, xAI, etc. can be used with the respective AI harnesses with the [Splunk MCP server](https://help.splunk.com/en/splunk-cloud-platform/mcp-server-for-splunk-platform/2.1/about-splunk-mcp-server/about-mcp-server-for-splunk-platform) connection and/or [SplunkCTL](https://github.com/splunk/splunkctl) to query Splunk indexes, generate reports, alerts, dashboards, etc.
+
+### Harness options
+
+| Option | What runs on `ai01` | Connectivity | Data posture |
+|--------|---------------------|--------------|--------------|
+| **Local harness (e.g. Pi)** | A self-contained/local AI harness such as Pi running on the PC/laptop | Works air-gapped if the model is local | Mission data stays on the kit |
+| **Subscription harness** | A vendor agent client - Anthropic Claude (e.g. Claude Code / Agent SDK) or OpenAI Codex - pointed at the vendor API | Connected mode only (needs egress to the vendor) | Mission data leaves the kit; see [11-security.md](11-security.md) |
+| **Team's private AI service** | The security team's own harness (e.g. a Pi Agent) pointed at their own private model endpoint | Per the team's network (VPN/[14](14-remote-replication-vpn.md)) | Governed by the team's own service |
+
+In all three cases the harness is configured for the **Splunk MCP server** so it can
+inspect indexes, run searches, and explain/optimize SPL against the kit's data. If the
+security team owns a private AI service, it can be used the same way - point their harness
+(such as a Pi Agent) at their private endpoint instead of a public vendor.
+
+### Placement and integration
+
+- `ai01` sits on the kit data VLAN ([03](03-network-design.md#ip-and-hostname-plan)) and
+  reaches the search head / indexers over Splunk's REST/MCP interface (8089).
+- The MCP server runs either on `ai01` or on a search head; the harness connects to it.
+- Analysts interact with the harness directly (its own UI/CLI) or via SOAR actions.
+- Install and configuration steps live in
+  [05-splunk-deployment.md](05-splunk-deployment.md#ai-server-optional).
+
+### Connectivity and data-sensitivity caution
+
+The choice of harness is a **connectivity and data-classification decision**
+([11-security.md](11-security.md#data-classification)):
+
+- A **local** harness (Pi with a local model) is the only option that keeps mission data
+  on the kit and works **air-gapped**.
+- A **subscription** harness (Claude, Codex) requires egress to the vendor API - it is
+  **connected mode only**, and sending mission data off-kit must be allowed by the
+  mission's data-handling rules. Route any egress through the firewall with an explicit,
+  logged allow rule ([06](06-offline-repo.md#connected-mode-policy)).
+- A **private** team service keeps data within the team's control but still crosses the
+  link to their endpoint - treat that link per [14](14-remote-replication-vpn.md) and
+  [11](11-security.md).
+
+> Hardware specs for `ai01` depend on the harness. A subscription or private
+> remote service needs only a light client (any modern PC/laptop). A *local* model harness
+> may need more RAM/VRAM than a plain laptop provides - size it to the chosen local model
+> before committing it to the BOM ([02](02-hardware-bom.md)).
+
+</script>
+<script type="text/markdown" data-id="02-hardware-bom" data-title="02 - Hardware BOM" data-group="Design" data-file="docs/02-hardware-bom.md">
+# 02 - Hardware Bill of Materials
+
+Per-tier bill of materials for compute, storage, networking, power, and transport. All
+model numbers are **references** - verify the current SKU, availability, and spec at time
+of purchase. Quantities assume one spare is carried for critical single-point roles where
+noted.
+
+> Cisco Catalyst and Cisco Meraki are the reference networking
+> brands and models here - but the kit is **vendor-agnostic**: every model below is "or similar," and
+> an equivalent from another vendor that matches the port/speed/management posture is fine.
+> Meraki (MX firewalls, cloud-managed switches) requires internet access to
+> the Meraki dashboard and so is **connected-mode only** - see
+> [03-network-design.md](03-network-design.md) and
+> [14-remote-replication-vpn.md](14-remote-replication-vpn.md). For air-gapped missions,
+> use locally-managed Catalyst switches and Cisco Secure Firewall.
+
+## Compute reference specs
+
+Match hosts to roles. These are minimums; more RAM/NVMe is always welcome on Search Heads and Indexers.
+
+**Recommendation (Nov, 2026):**
+
+Purchase the highest core/thread count CPUs possible per instance.  More CPU cores/threads reduce the need for clustering or reduce the number of cluster nodes/members.
+
+For laptop instances:
+
+- AMD Ryzen 8000/9000-series
+- Intel Core-series
+
+For desktop instances:
+
+- AMD Ryzen 7000/9000-series or Ryzen Threadripper
+- Intel Core Ultra-series or Xeon 600-seriesHigh-end Desktop (HEDT) CPUs are highly recommended or should be used for Medium to High volume deployment scenarios.
+
+| Class | Role(s) | CPU | RAM | Storage | Notes |
+| --- | --- | --- | --- | --- | --- |
+| **Indexer desktop** | Indexer | 12+ physical cores | 32-64 GB | 2x NVMe (OS + data), size per [01 sizing](01-architecture.md#sizing-math) internal server-class SATA/SAS HDD for additional storage.  USB HDD/SSD/NVMe storage optional. | SFF/mini-tower; fast sustained write is the priority |
+| **ES/search laptop/desktop** | ES SH, ad-hoc SH, Splunk MCP | 8+ cores | 64 GB | 1-2 TB NVMe | High RAM for data models / ES |
+| **Management laptop** | CM/LM/DS/MC/DNS/DHCP/NTP | 8 cores | 32 GB | 1 TB NVMe | Battery = built-in UPS |
+| **Ingest host** | HF, HEC, SC4S | 8 cores | 32 GB | 512 GB-1 TB NVMe | SC4S needs a container runtime |
+| **SOAR desktop** | SOAR | 8+ cores | 64 GB | 1 TB+ NVMe | RHEL-family only; PostgreSQL 15 local; not containerized |
+| **AI server** (optional) | AI harness + Splunk MCP | 4+ cores | 16 GB (more for a local model) | 256 GB-1 TB | Simple PC/laptop; a local-model harness may need more RAM/VRAM - see [01 AI server](01-architecture.md#ai-server-optional) |
+
+Note:
+
+Rugged/field notes: prefer business-class laptops with large batteries;
+prefer desktops with tool-less drive bays and standard ATX/SFX power for field-replaceable
+PSUs. Carry at least one cold spare indexer desktop in Medium/Large.
+
+Backup power supply recommended for desktops.
+
+Host-count note: running Splunk roles as containers
+([07-containerization.md](07-containerization.md)) lets several roles share one physical
+host, which can reduce the machine count below (especially the management laptops). The
+per-role capacity (CPU/RAM/NVMe) is unchanged - containers consolidate hardware, they do
+not shrink what each role needs.
+
+## STORAGE
+
+**Recommendation:**
+
+###
+
+- Use solid-state (SSD/NVMe) storage for the fastest, most reliable performance
+- Hard drives (HDD) can be used for larger or longer deployments for slower, bulk storage
+- Direct Attached Storage (DAS) with SAS, Thunderbolt, USB, etc. connections for bulk storage for Indexers
+- Network Attached Storage (NAS) with minimum 1GbE (2.5GbE or greater recommended) network interfaces for bulk storage for Indexers
+
+Splunk provides[ index tier storage](https://help.splunk.com/en/splunk-enterprise/administer/manage-indexers-and-indexer-clusters/10.6/manage-index-storage/configure-index-storage#d56c616c_422a_4bcc_9f6d_356f45faa863--en) per indexes based on timestamps of data, Hot, Warm, Cold buckets.
+
+**<u>WARNING</u>:** Avoid Frozen bucket tier during active investigations, data is archived and not searchable!
+
+Link: [Estimate indexer storage requirements](https://help.splunk.com/en/splunk-enterprise/get-started/deployment-capacity-manual/10.6/hardware-capacity-planning/estimate-your-storage-requirements)
+
+Recommend to store at least the last 24 hours of data on SSD/NVMe.
+
+## Networking
+
+Bandwidth policy: **1 GbE minimum on every host, 10 GbE recommended** for indexers,
+search heads, and the switch uplink/backbone. Indexer replication (port 9887) and
+distributed search are the traffic that benefits most from 10 GbE.
+
+### Switches (reference)
+
+All models below are references - **or similar** equivalents are acceptable.
+
+| Tier | Ports | Speed | Catalyst (or similar, local-managed) | Meraki (or similar, cloud-managed; connected only) |
+|------|-------|-------|--------------------------------------|----------------------------------------------------|
+| Small | 8-12 | 1 GbE min, mGig/10G preferred | Catalyst 1300 compact (e.g. C1300-12XT, 12x 10G copper) | MS130 compact (mGig/10G) |
+| Medium | 16-24 | 10G | Catalyst 1300 24-port 10G (e.g. C1300-24XT) or Catalyst 9200CX | MS150 series |
+| Large | 24-48 | 10G, 10/25G uplinks | Catalyst 9300X | MS390 / MS450-class |
+
+- **Or similar.** These models are references; the kit is vendor-agnostic. Any managed
+  switch meeting the port count, speed, and management posture for the tier is acceptable
+  (for example, Aruba/HPE, Juniper, Netgear/MikroTik business lines).
+- Catalyst 1300 / 9200 / 9300 (or similar locally-managed switches) work air-gapped via
+  web UI / CLI.
+- Meraki switches (or any cloud-managed switch) need the cloud dashboard - list them only
+  for connected missions.
+- Carry a spare small unmanaged 5-8 port 1G switch as a field backup.
+
+### Firewall (reference)
+
+Optional in Small, recommended in Medium/Large.
+
+| Option | Model reference | Management | Air-gap? | Site-to-site VPN |
+|--------|-----------------|------------|----------|------------------|
+| **Cisco Secure Firewall (default)** | 1200 series, e.g. 1210, or similar | Local (FDM) or optional cloud (CDO) | Yes (FDM local) | IPsec |
+| Cisco Meraki MX, or similar | MX67 / MX75 / MX85 | Cloud dashboard (required) | No | Auto VPN + IPsec |
+
+**Or similar.** A locally-managed firewall from another vendor (for example,
+pfSense/OPNsense, Fortinet, Palo Alto) is acceptable as long as it supports local
+management for air-gap and standards-based site-to-site IPsec. The deciding factor is
+local vs. cloud management, not the brand.
+
+Secure Firewall 1200 with local FDM is the default because it works disconnected. Use
+Meraki MX only when the mission is connected and the remote end is also Meraki (Auto VPN
+simplifies site-to-site).
+
+### Cabling and transit networking
+
+- Cat6a patch cables (10G-rated), one per host plus 25% spares, pre-labeled to the IP
+  plan hostnames.
+- SFP+/SFP28 transceivers and DAC/fiber as required by the chosen switch uplinks.
+- A small labeled cable pouch; color-code by VLAN (see [03](03-network-design.md)).
+- Optional: cellular/5G modem or BGAN/satellite terminal for connected mode at remote
+  sites (feeds the firewall WAN).
+
+## Power
+
+- **UPS:** at least one UPS sized to the desktop + switch + firewall load for clean
+shutdown (laptops self-protect on battery). ~1000-1500 VA covers Small/Medium desktop
+counts; size Large to measured load.
+- **PDU:** a rugged surge-protected PDU with enough outlets for all desktops, switch,
+firewall, UPS, and chargers.
+- **Input:** carry IEC cables plus region adapters; note voltage range (auto-ranging
+PSUs preferred for 100-240 V missions).
+- A generator or large-capacity portable power station is a mission-dependent add-on for
+truly off-grid tactical use.
+
+### Power budget (planning estimate)
+
+Steady-state draw; measure actual on the bench before the mission.
+
+| Item | Watts each | Small qty | Medium qty | Large qty |
+|------|-----------|-----------|------------|-----------|
+| Indexer desktop | ~150-250 | 1-2 | 3 | 4-6 |
+| Laptop (SH/mgmt/ingest) | ~60-90 | 3 | 5 | 7 |
+| SOAR desktop | ~150-250 | 0-1 | 1 | 1 |
+| AI server (optional) | ~60-90 (PC/laptop); more if running a local GPU model | 0-1 | 0-1 | 0-1 |
+| Switch | ~30-150 | 1 | 1 | 1 |
+| Firewall | ~30-60 | 0-1 | 1 | 1 |
+| **Approx total** | | **~0.6-1.0 kW** | **~1.5-2.2 kW** | **~2.5-4+ kW** |
+
+The AI server is optional and, as a plain PC/laptop running a harness, draws about as much
+as the other laptops. If a *local* GPU model is chosen instead, re-cost its power when the
+spec is set ([01 AI server](01-architecture.md#ai-server-optional)).
+
+## Transport / cases
+
+- Rugged wheeled cases with custom foam (Pelican-class) sized per tier; keep total
+  per-case weight within what one person can lift (~20-23 kg) and within airline/freight
+  limits.
+- Separate the "compute" case(s) from the "network + power" case for faster setup.
+- Include: labeled cables, spare drives, the offline media
+  ([06-offline-repo.md](06-offline-repo.md)) on at least two separate drives, printed
+  runbooks and checklists ([appendix-checklists.md](appendix-checklists.md)), and a small
+  tool/label kit.
+
+### Weight budget (planning estimate)
+
+| Tier | Compute | Network + power | Approx total |
+|------|---------|-----------------|--------------|
+| Small | ~15-20 kg | ~10-15 kg | ~25-35 kg (2 cases) |
+| Medium | ~30-40 kg | ~15-20 kg | ~45-60 kg (3-4 cases) |
+| Large | ~55-75 kg | ~20-30 kg | ~75-105 kg (5+ cases) |
+
+## Per-tier BOM summary
+
+### Small
+- 1-2 indexer desktops, 1 management laptop, 1 ES/search laptop, 1 ingest host
+- Optional 1 SOAR desktop
+- 1 compact switch (Catalyst 1300 compact or similar), optional firewall (Secure Firewall 1210 or similar)
+- 1 UPS, 1 PDU, cabling, 2 cases
+
+### Medium
+- 3 indexer desktops (+1 cold spare recommended), 2 management laptops, 1 ES laptop,
+  optional 1 ad-hoc SH laptop, 1 HF host, 1 SC4S host, 1 SOAR desktop, 1 AI desktop
+- 1 24-port 10G switch (Catalyst 1300-24XT / 9200CX or similar)
+- 1 Secure Firewall 1210 (or similar)
+- 1-2 UPS, 1-2 PDU, cabling, 3-4 cases
+
+### Large
+- 4-6 indexer desktops (+1-2 cold spares), 2 management hosts, 3 ES SH cluster laptops,
+  2 HF hosts, 1 SC4S host, 1 SOAR desktop, 1 AI desktop
+- 1 24-48 port 10G switch (Catalyst 9300X or similar)
+- 1 Secure Firewall 1210 or similar (or larger if WAN throughput demands)
+- 2+ UPS, 2 PDU, cabling, 5+ cases
+
+> Automation hook (out of scope here): a packing/manifest generator could emit this BOM
+> and the serial/asset list from the kit manifest. Tracked in
+> [06-offline-repo.md](06-offline-repo.md) manifest.
+
+</script>
+<script type="text/markdown" data-id="03-network-design" data-title="03 - Network Design" data-group="Design" data-file="docs/03-network-design.md">
+# 03 - Network Design
+
+The kit ships with its own self-contained network so it behaves identically every
+deployment regardless of the site. This document defines the switch choice, bandwidth
+policy, VLAN layout, the fixed IP/hostname plan, the Splunk ports matrix, the kit's
+DNS/DHCP/NTP services, and the firewall policy.
+
+## Bandwidth policy
+
+- **1 GbE minimum** on every host.
+- **10 GbE recommended** for indexers, search heads, and the switch backbone/uplink.
+- The traffic that most needs 10 GbE: indexer-to-indexer **replication (9887)** in a
+  cluster, bulk **forwarding (9997)** during a burst/backfill, and distributed search
+  fan-out from the ES search head.
+
+See [02-hardware-bom.md](02-hardware-bom.md#switches-reference) for the switch SKUs per
+tier (Catalyst for air-gap, Meraki for connected-only).
+
+## VLAN layout
+
+A small set of VLANs keeps management, data, site traffic, and VPN transit separated.
+For the Small tier a single flat VLAN is acceptable; Medium/Large should segment.
+
+| VLAN | Name | Purpose | Example subnet |
+|------|------|---------|----------------|
+| 10 | mgmt | Out-of-band/host mgmt, IPMI, switch/firewall mgmt | 10.73.10.0/24 |
+| 20 | data | Splunk data plane: forwarding, replication, search | 10.73.20.0/24 |
+| 30 | site | Site-facing ingest interface(s) toward the org network | 10.73.30.0/24 |
+| 40 | vpn | VPN transit to remote DC/cloud / Headscale | 10.73.40.0/24 |
+| 50 | wifi | Optional operator/analyst Wi-Fi access (opt-in, off by default) | 10.73.50.0/24 |
+
+Notes:
+- The data VLAN (20) carries the bulk of traffic - put the 10 GbE here.
+- The site VLAN (30) is the only one that touches the organization's network and only via
+  the firewall or a dual-homed heavy forwarder (see [13-site-integration.md](13-site-integration.md)).
+- Color-code patch cables by VLAN and label both ends to the hostnames below.
+
+## IP and hostname plan
+
+Fixed addressing on the data VLAN so configs, DNS, and runbooks never change between
+missions. The example uses `10.73.20.0/24` with domain `kit.local`.
+
+> The `10.73.x.x` range is chosen to avoid the very common `10.0.x`, `192.168.0/1.x`, and
+> `172.16.x` ranges that organizations use, reducing the chance of a clash when the kit
+> joins a site. If it still clashes, re-address the data VLAN once and update DNS + the
+> few config files that pin IPs (CM `server.conf`, `outputs.conf`, LM URI).
+
+| Hostname | Role | Data VLAN IP | Present in |
+|----------|------|--------------|-----------|
+| mgmt01.kit.local | CM+LM+MC (S: +DS+DNS/DHCP/NTP) | 10.73.20.11 | all |
+| mgmt02.kit.local | DS (+Deployer, DNS/DHCP/NTP) | 10.73.20.12 | M/L |
+| es01.kit.local | ES search head (SHC member) | 10.73.20.21 | all |
+| es02.kit.local | ES SHC member | 10.73.20.22 | L |
+| es03.kit.local | ES SHC member | 10.73.20.23 | L |
+| sh01.kit.local | Ad-hoc search head | 10.73.20.29 | M (opt) |
+| idx01.kit.local | Indexer | 10.73.20.31 | all |
+| idx02.kit.local | Indexer | 10.73.20.32 | S(opt)/M/L |
+| idx03.kit.local | Indexer | 10.73.20.33 | M/L |
+| idx04-06.kit.local | Indexer | 10.73.20.34-36 | L |
+| hf01.kit.local | Heavy forwarder + HEC | 10.73.20.41 | all |
+| hf02.kit.local | Heavy forwarder + HEC | 10.73.20.42 | L |
+| sc4s01.kit.local | SC4S syslog | 10.73.20.45 | M/L (S: on hf01) |
+| soar01.kit.local | SOAR | 10.73.20.51 | S(opt)/M/L |
+| ai01.kit.local | AI server (optional) | 10.73.20.61 | opt (any tier) |
+| sw01 / fw01 | Switch / firewall mgmt | 10.73.10.2 / 10.73.10.1 | mgmt VLAN |
+| ap01.kit.local | Wi-Fi access point (optional) | 10.73.10.3 | opt (mgmt VLAN) |
+
+Reserve `10.73.20.100-199` in DHCP for transient clients (analyst workstations, a
+site-provided forwarder under test). Everything in the table is static.
+
+## Splunk ports matrix
+
+Splunk default ports (all configurable; these are the defaults the runbooks assume).
+Open these **within the kit LAN**; the subset that must be opened on the org firewall for
+ingestion is in [13-site-integration.md](13-site-integration.md).
+
+| Port | Proto | Service | Direction / who | 
+|------|-------|---------|-----------------|
+| 8000 | TCP | Splunk Web (HTTPS) | Analysts -> SH/MC |
+| 8089 | TCP | splunkd management/REST | All Splunk <-> all Splunk (CM, LM, DS, deployer, MC, peers) |
+| 9997 | TCP | Forwarder receiving | Forwarders/HF -> indexers |
+| 9887 | TCP | Indexer cluster replication | Indexer <-> indexer (cluster only) |
+| 8088 | TCP | HTTP Event Collector (HEC) | Sources -> HF/indexers |
+| 8065 | TCP | App server (internal) | Local on SH |
+| 8191 | TCP | KV store (mongod) | SH / SHC members |
+| 8181 | TCP | SHC replication port (example; admin-chosen) | ES SHC members (L) |
+| 514 | UDP/TCP | Syslog in (to SC4S) | Devices -> SC4S |
+| 6514 | TCP | Syslog over TLS (to SC4S) | Devices -> SC4S |
+| 123 | UDP | NTP | All hosts -> mgmt (chrony) |
+| 53 | UDP/TCP | DNS | All hosts -> mgmt |
+| 67/68 | UDP | DHCP (kit LAN only) | Transient clients -> mgmt |
+
+SOAR ports:
+
+| Port | Proto | Service |
+|------|-------|---------|
+| 443 | TCP | SOAR web UI / REST |
+| 5432 | TCP | PostgreSQL 15 (SOAR internal; local unless clustered) |
+| 9200/9300 | TCP | Elasticsearch (SOAR internal) |
+| GlusterFS ports | TCP | SOAR cluster file shares (clustered SOAR only) |
+
+## Kit services: DNS, DHCP, NTP
+
+Hosted on the management node (`mgmt01` in Small; `mgmt02` in Medium/Large).
+
+- **DNS** - authoritative for `kit.local` with forward and reverse zones matching the IP
+  plan. In air-gapped mode it is the only resolver; in connected mode it forwards unknown
+  queries upstream (or to the firewall). Every host uses `kit.local` names, never raw IPs,
+  so re-addressing touches one zone file.
+- **DHCP** - serves only the reserved transient range on the data VLAN; all infrastructure
+  hosts are static. Keeps a rogue DHCP server off the org network - the kit's DHCP must
+  **not** be bridged onto the site VLAN.
+- **NTP (chrony)** - the kit's authoritative time source. Correct time is critical:
+  Splunk indexes events by timestamp, cluster/SHC elections and TLS cert validation all
+  depend on agreed time, and skew corrupts correlation. When connected, chrony disciplines
+  to an upstream/GPS source; when air-gapped it free-runs from `mgmt` (optionally a small
+  GPS/PPS dongle for drift control on long missions).
+
+> Note:
+>
+> Air-gapped chrony free-running from one host drifts over long deployments.
+> Ceiling: clock drift on multi-week missions. Upgrade path: add a GPS/PPS time source on
+> the mgmt node.
+
+## Firewall policy
+
+The firewall (Cisco Secure Firewall 1210 default, or similar locally-managed firewall;
+Meraki MX or similar cloud-managed firewall is connected-only) sits between
+the kit LAN and both the site VLAN and any VPN transit.
+
+Default stance - **deny all, allow by exception**:
+
+- **Kit LAN internal** - permit the ports matrix above between kit hosts (ideally
+  switch-enforced within the data VLAN; the firewall governs inter-VLAN).
+- **Site VLAN (ingestion)** - permit only the specific ingest ports inbound from the
+  org's sources to the kit's HF/HEC/SC4S (9997, 8088, 514/6514), and only the specific
+  egress the kit needs (e.g. UF pull of apps). Enumerated in
+  [13-site-integration.md](13-site-integration.md).
+- **VPN transit** - permit only IPsec (IKE/UDP 500, NAT-T/UDP 4500, ESP) or Headscale
+  WireGuard (UDP 41641 + the Headscale control port) to the specific remote peer. See
+  [14-remote-replication-vpn.md](14-remote-replication-vpn.md).
+- **Wi-Fi VLAN (optional)** - if Wi-Fi is enabled, permit wireless clients to reach only
+  Splunk Web (8000) on the search head/MC; deny the rest of the data plane. See
+  [Wi-Fi access](#wi-fi-access-optional).
+- **Management** - restrict switch/firewall admin to the mgmt VLAN only.
+- Log denies; export firewall logs into Splunk as a data source.
+
+```mermaid
+flowchart LR
+    subgraph site [Site VLAN 30]
+        src[OrgSources]
+    end
+    subgraph vpn [VPN VLAN 40]
+        peer[RemotePeer]
+    end
+    src -->|"9997/8088/514"| fw[Firewall]
+    peer <-->|"IPsec / WireGuard"| fw
+    subgraph data [Data VLAN 20]
+        idx[Indexers]
+        sh[SearchHeads]
+        ing[Ingest]
+    end
+    fw --> ing
+    ing --> idx
+    sh --> idx
+    mgmtVlan["Mgmt VLAN 10: switch/fw admin"] -.-> fw
+```
+
+## Wi-Fi access (optional)
+
+The kit is wired-first. Wi-Fi is **opt-in** and should stay **off for air-gapped and
+high-sensitivity missions** - a wireless radio is extra attack surface and can trip a
+site's wireless IDS. Enable it only when operators genuinely need cable-free access to
+Splunk Web in the field, and treat it as untrusted transit, not part of the trusted data
+plane.
+
+When Wi-Fi is used:
+
+- **Dedicated AP on its own VLAN.** Use a dedicated access point (Meraki MR-series or a
+  Catalyst 9100-series AP, or similar) on the `wifi` VLAN (50). For air-gapped missions the
+  AP must be locally manageable - cloud-managed Meraki APs need egress, so use an
+  embedded/Catalyst AP in air-gap, the same split as the switches in
+  [02-hardware-bom.md](02-hardware-bom.md#switches-reference).
+- **Scope it to Splunk Web only.** Firewall the Wi-Fi VLAN so wireless clients reach only
+  port 8000 on the search head/MC - never the forwarding (9997), replication (9887), HEC,
+  or management (8089) ports. Analysts browse; they do not join the data plane.
+- **WPA3, 802.1X preferred.** Use WPA3-Enterprise (802.1X) backed by the kit's own RADIUS
+  where feasible, so each operator has an individual credential that can be revoked. If
+  Enterprise auth is impractical in the field, use WPA3-Personal (SAE) with a long, random,
+  per-mission passphrase. Never Open, WEP, WPA/TKIP, or WPS.
+- **Protected Management Frames (PMF / 802.11w) required**, and enable **client isolation**
+  so wireless clients cannot reach each other.
+- **Do not bridge Wi-Fi to the site VLAN**, and do not let the kit act as a rogue AP on the
+  org's premises - coordinate SSID/channel/power with the site so the kit does not interfere
+  with or trip the org's wireless monitoring.
+- **Lock down management.** Restrict AP admin to the mgmt VLAN, change default credentials,
+  and limit TX power to the immediate work area to reduce signal leakage. A hidden SSID and
+  a MAC allowlist are weak defense-in-depth only - not a substitute for WPA3 + 802.1X.
+- **Rotate and wipe.** Rotate the passphrase/keys every mission, forward AP
+  authentication/association events into Splunk as a data source, and wipe the AP
+  configuration at teardown with the rest of the kit
+  ([10-runbook-teardown.md](10-runbook-teardown.md#phase-4--secure-wipe),
+  [11-security.md](11-security.md)).
+
+> `ponytail:` Wi-Fi is deliberately a thin, scoped add-on (browse-only, one VLAN). The
+> ceiling is that it is not meant to carry forwarding/replication traffic. Upgrade path: if
+> a mission needs wireless data collection, design a separate hardened WLAN with its own
+> risk review rather than widening this one.
+
+</script>
+<script type="text/markdown" data-id="04-os-baseline" data-title="04 - OS Baseline" data-group="Build" data-file="docs/04-os-baseline.md">
+# 04 - OS Baseline
+
+The Linux build standard every kit host is imaged to before Splunk is installed. A single
+consistent baseline makes the deployment runbook deterministic and the configs portable.
+
+## OS choice
+
+| Role | Primary OS | Alternative | Why |
+|------|-----------|-------------|-----|
+| Splunk Enterprise (indexer, SH, mgmt, HF) | Rocky Linux 9 / RHEL 9 | Ubuntu 24.04 LTS | Both are supported by Splunk Enterprise 10.6 |
+| SOAR | Rocky Linux 9.7+ / RHEL 9.7+ (or Oracle Linux 9) | - | **SOAR does not support Ubuntu**; see below |
+| SC4S ingest host | Rocky/RHEL 9 or Ubuntu 24.04 | - | Needs a container runtime (Podman/Docker) |
+| Containerized Splunk roles (optional) | Rocky/RHEL 9 or Ubuntu 24.04 | - | Host runs Podman/Docker; see [07-containerization.md](07-containerization.md). SOAR is the exception - it cannot be containerized |
+
+Standardizing on **Rocky Linux 9 / RHEL 9 across the whole kit** is the recommended path:
+it is the one OS that satisfies every role (including SOAR), which keeps the offline repo,
+the hardening, and the runbooks single-track. Ubuntu is listed only as a fallback for
+non-SOAR hosts if RHEL-family media is unavailable.
+
+### SOAR OS constraints (verified against Splunk docs)
+
+Splunk SOAR (On-premises) 8.7 supported operating systems:
+
+- Red Hat Enterprise Linux 8 (8.10+) or 9 (9.7+)
+- Oracle Linux 8 (8.10+) or 9 (9.7+)
+- Amazon Linux 2023 (2023.10.x+)
+
+Hard constraints:
+
+- **Not Ubuntu / Debian.** Do not plan SOAR on Ubuntu.
+- **Cannot be installed inside a Docker or Podman container.** SOAR runs on the host.
+- Bundles **PostgreSQL 15**, Elasticsearch, and (for clustered SOAR) **GlusterFS** file
+  shares. The installer expects **umask 0022**.
+- Installs as the unprivileged `phantom` user into `/opt/phantom` (`<$PHANTOM_HOME>`).
+- Uses Splunk Universal Forwarder 10.4.1 internally.
+- Can run FIPS-compliant only if the OS kernel is in FIPS mode and it is a fresh
+  unprivileged install.
+- If `fapolicyd` is enabled on RHEL, stop it for install, then allow-list SOAR and
+  restart it.
+
+## Disk layout
+
+NVMe, GPT, UEFI. Separate OS from Splunk data so a full data volume never takes down the
+OS, and so teardown wipe targets the data volume directly.
+
+| Mount | Size | Notes |
+|-------|------|-------|
+| `/boot/efi` | 1 GB | ESP |
+| `/boot` | 1 GB | |
+| `/` | 50-80 GB | OS |
+| `/var` | 20 GB | separate so logs can't fill `/` |
+| `/opt/splunk` | 50-100 GB | Splunk install + `var/log/splunk` (indexers: hot/warm goes on the data volume below) |
+| `/opt/splunk/var/lib/splunk` (indexers) | remainder of data NVMe | hot/warm index storage; size per [01 sizing](01-architecture.md#sizing-math) |
+| swap | per RAM / disable | Splunk prefers little/no swapping |
+
+SOAR hosts: give `/opt/phantom` the large volume; keep `/home` and `/tmp` writable as the
+docs require.
+
+## OS tuning for Splunk
+
+Apply on every Splunk host. These are the long-standing Splunk prerequisites.
+
+- **Transparent Huge Pages (THP): disabled.** THP hurts Splunk performance. Disable via
+  kernel cmdline or a `tuned`/systemd unit and verify at boot.
+- **ulimits** for the `splunk` user (`/etc/security/limits.d/`):
+  - `nofile` (open files) >= 64000
+  - `nproc` (user processes) >= 16000
+  - `fsize` (max file size) unlimited
+  - `data`/`memory` unlimited
+- **Time sync:** chrony enabled, pointed at the kit NTP source
+  ([03-network-design.md](03-network-design.md)). No host free-runs independently.
+- **Disable unnecessary services;** keep the box minimal.
+- **I/O scheduler:** `none`/`mq-deadline` for NVMe.
+
+## Accounts and service management
+
+- Dedicated unprivileged **`splunk`** OS user and group; Splunk installed to
+  `/opt/splunk` owned by `splunk`.
+- Splunk runs as a **systemd** service (`systemctl enable --now Splunkd`) using
+  `enable boot-start -user splunk -systemd-managed 1`, so hosts come back cleanly after
+  a power event - important in the field.
+- SOAR runs as the **`phantom`** user per its installer; managed by its own units.
+- No shared logins; per-operator accounts; sudo logged (see [11-security.md](11-security.md)).
+
+## Firewall and SELinux
+
+- **firewalld** enabled on every host, default-deny, opening only that host's required
+  ports from the matrix in [03-network-design.md](03-network-design.md). Example for an
+  indexer: allow 8089, 9997, 9887 from the data VLAN only.
+- **SELinux: enforcing.** Splunk Enterprise runs under enforcing SELinux. If a specific
+  input or path needs a policy exception, document the exact `semanage`/`setsebool` rule
+  in the host's build notes rather than disabling SELinux. (SOAR documents its own
+  SELinux/`fapolicyd` handling above.)
+
+## Build output
+
+Each imaged host should end at a known state before Splunk install:
+
+1. OS installed to the disk layout above, UEFI, hostname + static IP per the plan.
+2. THP off, ulimits set, chrony synced, I/O scheduler set.
+3. `splunk` (and `phantom` on SOAR) user created; `/opt/splunk` volume mounted.
+4. firewalld + SELinux enforcing with the host's port set open.
+5. Registered in kit DNS; reachable by name from `mgmt`.
+
+> Automation hook (out of scope): this baseline is the natural target for a kickstart /
+> autoinstall file plus an Ansible hardening role. The doc is written so each step maps
+> 1:1 to a future task.
+
+A quick post-build self-check is in
+[appendix-checklists.md](appendix-checklists.md#os-baseline-self-check-per-host).
+
+</script>
+<script type="text/markdown" data-id="05-splunk-deployment" data-title="05 - Splunk Deployment" data-group="Build" data-file="docs/05-splunk-deployment.md">
+# 05 - Splunk Deployment
+
+Per-tier install order and role configuration for Splunk Enterprise 10.6, Enterprise
+Security, and SOAR 8.7. Config snippets are copy-paste starting points - set them in app
+context (e.g. `$SPLUNK_HOME/etc/apps/kit_base/local/`) where practical, not in
+`system/local`, so they travel with the kit's base app.
+
+All hostnames/IPs/ports refer to [03-network-design.md](03-network-design.md). Licensing,
+clustering secrets, and TLS are covered in [11-security.md](11-security.md).
+
+This document covers the bare-metal install. Any role except SOAR can instead run as a
+Docker/Podman container for faster deployment and host consolidation - see
+[07-containerization.md](07-containerization.md). The two styles mix freely within one kit.
+
+## Install order (all tiers)
+
+Order matters so each role can register with its manager as it comes up:
+
+1. **License manager (LM)** - so every other instance can point its license at it.
+2. **Cluster manager (CM)** - Small/Medium/Large, before indexers.
+3. **Indexers** - join the cluster (S/M/L) or come up standalone (S).
+4. **Deployment server (DS)** - before forwarders/HF so they pull apps.
+5. **Search heads** (ES, ad-hoc) / **ES SH cluster + deployer** (L).
+6. **Monitoring console (MC)** - last, so it discovers a complete topology.
+7. **Ingest**: HF, HEC, SC4S.
+8. **SOAR**, then the optional **AI server**.
+
+## Licensing
+
+Point every instance at the LM. On the LM, install the license; on peers:
+
+```ini
+# $SPLUNK_HOME/etc/system/local/server.conf  (on each non-LM instance)
+[license]
+manager_uri = https://mgmt01.kit.local:8089
+```
+
+Carry the license file on the offline media ([06-offline-repo.md](06-offline-repo.md)).
+For disconnected missions confirm the license terms allow offline operation; the
+no-enforcement grace behavior should be understood before you rely on it.
+
+## Management roles and colocation
+
+Follow the colocation rules in
+[01-architecture.md](01-architecture.md#management-role-colocation). The critical one:
+**the cluster manager must not share a host with the deployment server, an indexer, or a
+search head.**
+
+- **Small (no cluster):** `mgmt01` = LM + DS + MC + DNS/DHCP/NTP. MC-on-DS is supported
+  because deployment clients are far under 50.
+- **Medium/Large (clustered):** `mgmt01` = CM + LM + MC; `mgmt02` = DS (+ ES SHC deployer
+  on Large) + DNS/DHCP/NTP. This keeps CM away from DS.
+
+## Indexers
+
+### Standalone (Small)
+
+Enable receiving and define indexes. No cluster config.
+
+```ini
+# inputs.conf - receive from forwarders
+[splunktcp://9997]
+```
+
+```ini
+# indexes.conf - mission indexes (example)
+[mission_wineventlog]
+homePath   = $SPLUNK_DB/mission_wineventlog/db
+coldPath   = $SPLUNK_DB/mission_wineventlog/colddb
+thawedPath = $SPLUNK_DB/mission_wineventlog/thaweddb
+maxTotalDataSizeMB = 512000
+frozenTimePeriodInSecs = 2592000   # 30 days; tune per retention
+```
+
+### Clustered (Medium/Large)
+
+On the **CM** (`mgmt01`):
+
+```ini
+# server.conf
+[clustering]
+mode = manager
+replication_factor = 2
+search_factor = 2
+pass4SymmKey = <cluster-secret>     # same on CM and all peers; see 11-security.md
+cluster_label = flyaway
+
+[license]
+manager_uri = https://mgmt01.kit.local:8089   # LM is local on mgmt01
+```
+
+On each **peer/indexer**:
+
+```ini
+# server.conf
+[replication_port://9887]
+
+[clustering]
+mode = peer
+manager_uri = https://mgmt01.kit.local:8089
+pass4SymmKey = <cluster-secret>
+cluster_label = flyaway
+```
+
+```ini
+# inputs.conf
+[splunktcp://9997]
+```
+
+Push indexes to peers from the CM as the cluster bundle
+(`$SPLUNK_HOME/etc/manager-apps/`) rather than editing peers directly:
+
+```ini
+# manager-apps/kit_indexes/local/indexes.conf  (replicated to all peers)
+[mission_wineventlog]
+homePath   = $SPLUNK_DB/mission_wineventlog/db
+coldPath   = $SPLUNK_DB/mission_wineventlog/colddb
+thawedPath = $SPLUNK_DB/mission_wineventlog/thaweddb
+repFactor  = auto
+frozenTimePeriodInSecs = 2592000
+```
+
+Apply with `splunk apply cluster-bundle` on the CM. Confirm the cluster is complete
+(`splunk show cluster-status`) before ingesting.
+
+## Search heads
+
+### ES search head (all tiers)
+
+Dedicated host. Add the indexers as search peers (standalone) or configure as a cluster
+search head (clustered). Clustered:
+
+```ini
+# server.conf on the ES SH
+[clustering]
+mode = searchhead
+manager_uri = https://mgmt01.kit.local:8089
+pass4SymmKey = <cluster-secret>
+```
+
+Install Enterprise Security (see [ES integration](#enterprise-security-integration)).
+
+### ES search head cluster (Large)
+
+An odd number of members (3) plus a deployer (on `mgmt02`). Initialize each member and the
+captain:
+
+```ini
+# server.conf on each SHC member
+[shclustering]
+conf_deploy_fetch_url = https://mgmt02.kit.local:8089
+pass4SymmKey = <shc-secret>
+shcluster_label = flyaway_shc
+replication_factor = 2
+```
+
+Then bootstrap the captain (`splunk bootstrap shcluster-captain ...`). Deploy ES and apps
+from the deployer with `splunk apply shcluster-bundle`. ES on an SHC has extra steps -
+follow the ES install guide for SHC and install ES on the deployer first.
+
+### Ad-hoc search head (Medium, optional)
+
+Same cluster-search-head config as ES SH, without ES. For hunting/dashboards so analysts
+don't add load to the ES SH.
+
+## Deployment server (forwarder management)
+
+The DS pushes TAs/apps to UFs and HFs via serverclasses. Define classes by data source so
+the Flyaway Kit app concept ([15-flyaway-kit-app-concept.md](15-flyaway-kit-app-concept.md))
+can map a checked source to a serverclass.
+
+```ini
+# serverclass.conf on the DS (mgmt01 in S, mgmt02 in M/L)
+[serverClass:all_forwarders]
+whitelist.0 = *
+
+[serverClass:all_forwarders:app:Splunk_TA_windows]
+restartSplunkd = true
+
+[serverClass:syslog_sources:app:Splunk_TA_nix]
+whitelist.0 = *linux*
+```
+
+Clients point at the DS:
+
+```ini
+# deploymentclient.conf on each UF/HF
+[deployment-client]
+[target-broker:deploymentServer]
+targetUri = mgmt02.kit.local:8089   # mgmt01 in Small
+```
+
+## Ingest tier
+
+### Forwarder output (UF/HF -> indexers)
+
+Standalone indexers - list them directly; clustered - also list all peers (indexer
+discovery via the CM is the cleaner option for clusters):
+
+```ini
+# outputs.conf on UF/HF
+[tcpout]
+defaultGroup = kit_idx
+
+[tcpout:kit_idx]
+server = idx01.kit.local:9997, idx02.kit.local:9997, idx03.kit.local:9997
+# clustered alternative - indexer discovery:
+# [indexer_discovery:kit]
+# manager_uri = https://mgmt01.kit.local:8089
+```
+
+### HEC (on hf01/indexers)
+
+```ini
+# inputs.conf
+[http]
+disabled = 0
+port = 8088
+enableSSL = 1
+
+[http://mission_app]
+token = <generated-token>
+index = mission_app
+sourcetype = mission:app
+```
+
+Manage tokens from the mgmt/token admin; carry no plaintext tokens in the repo.
+
+### SC4S (syslog)
+
+SC4S is Splunk's supported containerized syslog collector. On `sc4s01` (or `hf01` in
+Small) run the SC4S container (Podman/Docker), listening on 514/UDP-TCP and 6514/TLS, and
+forwarding to the indexers via the same `kit_idx` output group over HEC or splunktcp.
+Point network/security devices at `sc4s01`'s site-VLAN address
+([13-site-integration.md](13-site-integration.md)).
+
+## Monitoring console
+
+Bring the MC up last on `mgmt01`, set it to distributed mode, and add all instances as
+search peers so the whole kit is visible in one place. Respect the colocation rules: in a
+clustered kit the MC lives with the CM/LM on `mgmt01`, never on an indexer.
+
+## Enterprise Security integration
+
+- Install ES on the dedicated ES SH (or on the deployer first for an SHC).
+- Confirm the ES version is compatible with Splunk Enterprise 10.6 before the mission -
+  pin both in the manifest.
+- Map mission indexes into the ES/CIM data models so correlation searches and dashboards
+  populate. The Flyaway Kit app concept tracks CIM coverage per onboarded source.
+- Accelerate the data models you actually use; on a kit, disable the ones you don't to
+  save indexer CPU.
+
+## SOAR deployment
+
+- Install on a RHEL-family host only ([04-os-baseline.md](04-os-baseline.md#soar-os-constraints-verified-against-splunk-docs)).
+  Not on Ubuntu, not in a container.
+- Unprivileged install as `phantom` into `/opt/phantom`, umask 0022.
+- Connect SOAR to Splunk: configure the Splunk asset in SOAR pointing at the ES SH
+  (REST/8089) and configure ES/SOAR to send notables to SOAR for playbook automation.
+- Keep playbooks and custom apps on the offline media; load them during deployment.
+
+## AI server (optional)
+
+See [01-architecture.md](01-architecture.md#ai-server-optional) for the concept. `ai01` is
+a simple PC/laptop running an AI harness connected to the Splunk MCP server.
+
+1. **Stand up the Splunk MCP server** on `ai01` (or on the search head) and point it at the
+   ES SH / indexers over REST (8089). Scope its Splunk credentials to a read-oriented role.
+2. **Install the chosen harness** on `ai01`:
+   - *Local harness (e.g. Pi)* - carry its installer and local model on the offline media
+     ([06](06-offline-repo.md)); works air-gapped.
+   - *Subscription harness (Claude / Codex)* - install the vendor client and configure its
+     API key; requires firewall egress to the vendor (connected mode only).
+   - *Team's private AI service* - install the team's harness (e.g. a Pi Agent) and point
+     it at their private endpoint, reached per [14](14-remote-replication-vpn.md).
+3. **Register the MCP server with the harness** so the agent can list indexes, run
+   searches, and explain/optimize SPL against kit data.
+4. **Integrate** for analysts: use the harness directly, or invoke it from SOAR actions.
+5. Confirm the data-handling posture is allowed for the mission before sending any mission
+   data to a non-local harness ([11](11-security.md#data-classification)).
+
+## Validation
+
+After install, before declaring the kit operational, run the checks in
+[08-runbook-deploy.md](08-runbook-deploy.md#phase-6--validation) and
+[appendix-checklists.md](appendix-checklists.md). Minimum: cluster complete, ES SH sees
+all peers, a test event via each ingest path is searchable, MC shows all instances green.
+
+</script>
+<script type="text/markdown" data-id="06-offline-repo" data-title="06 - Offline Repo &amp; Air-gap" data-group="Build" data-file="docs/06-offline-repo.md">
+# 06 - Offline Repository and Connected-Mode Policy
+
+The kit must deploy fully air-gapped, which means every bit needed to build and run it is
+carried on offline media. This document defines what that media contains, how it is built
+and refreshed at base before a mission, how integrity is verified on site, and the policy
+for when the kit is allowed online.
+
+## Offline media layout
+
+Carry the repository on **at least two independent drives** (primary + backup), stored in
+separate cases. Encrypted at rest (see [11-security.md](11-security.md)).
+
+```
+flyaway-media/
+  MANIFEST.yaml            # single source of truth: versions, checksums, build date
+  CHECKSUMS.sha256         # sha256 of every artifact
+  os/
+    rocky-9-dvd.iso        # OS install media (and Ubuntu alt if used)
+    packages/              # offline dnf repo mirror for OS deps
+  splunk/
+    splunk-enterprise-10.6-*.rpm
+    splunkforwarder-10.x-*.rpm
+    splunk-es-<ver>.spl
+  soar/
+    splunk-soar-onprem-8.7-*.tgz
+  apps-tas/
+    Splunk_TA_windows/ Splunk_TA_nix/ Splunk_TA_<vendor>/ ...
+  sc4s/
+    sc4s-<ver>.container   # SC4S image tarball for offline load
+  images/                  # optional: docker/podman save tarballs (splunk/splunk, UF, mgmt tools)
+    splunk-splunk-10.6.tar # see 07-containerization.md
+  licenses/
+    splunk-enterprise.lic
+  configs/
+    kit_base/              # base app: outputs, indexes, serverclasses templates
+  vpn/
+    headscale-<ver>/       # if Headscale carried (see doc 13)
+  docs/                    # a copy of this repo's rendered docs + checklists
+```
+
+## MANIFEST.yaml
+
+The manifest is the authoritative record of exactly what this kit build contains. Pin
+every version; nothing is "latest".
+
+```yaml
+kit_build: 2026-11-18
+tier_target: medium
+software:
+  splunk_enterprise: "10.6.x"      # exact build
+  universal_forwarder: "10.x.x"
+  enterprise_security: "<ver>"
+  soar: "8.7.x"
+  sc4s: "<ver>"
+os:
+  primary: "Rocky Linux 9.x"
+  alt: "Ubuntu 24.04.x"
+apps_tas:
+  - {name: Splunk_TA_windows, version: "<ver>"}
+  - {name: Splunk_TA_nix, version: "<ver>"}
+license:
+  file: licenses/splunk-enterprise.lic
+  expires: "<date>"
+checksums: CHECKSUMS.sha256
+```
+
+Keep `MANIFEST.yaml` in version control (this repo) so each mission's build is auditable,
+and so the BOM/manifest could later be generated from it (noted in
+[02-hardware-bom.md](02-hardware-bom.md)).
+
+## Building / refreshing at base (connected)
+
+Done at home base where internet is available, before deployment:
+
+1. Download the pinned Splunk Enterprise, UF, ES, SOAR, and SC4S artifacts; download the
+   OS ISO.
+2. Mirror the OS package repo for offline `dnf` (so hardening/deps install with no
+   internet). For RHEL-family: `reposync` the needed repos into `os/packages/`.
+3. Collect the required TAs/apps from Splunkbase at pinned versions into `apps-tas/`.
+4. Place the license in `licenses/`.
+5. Generate checksums: `sha256sum` every artifact into `CHECKSUMS.sha256`.
+6. Update `MANIFEST.yaml` with versions, dates, and license expiry.
+7. Write to both media drives; verify each drive against `CHECKSUMS.sha256`.
+8. Record the refresh in the pre-departure checklist
+   ([appendix-checklists.md](appendix-checklists.md)).
+
+Refresh cadence: before every mission, and whenever a security patch or license renewal
+lands. License expiry is a go/no-go item - check it at pack time, not on site.
+
+## Verifying on site (air-gapped)
+
+Before installing anything, verify integrity so a corrupted or tampered drive is caught
+early:
+
+```bash
+cd flyaway-media
+sha256sum -c CHECKSUMS.sha256
+```
+
+All lines must report `OK`. If the primary drive fails, switch to the backup drive and
+note the failure in the mission report. Set up the OS offline repo by pointing `dnf` at
+`os/packages/` (a local `.repo` file), then proceed with
+[04-os-baseline.md](04-os-baseline.md) and [05-splunk-deployment.md](05-splunk-deployment.md).
+
+## Connected-mode policy
+
+When a mission has internet, online access is **opt-in and controlled**, never the
+default. The air-gapped path is always the primary path so behavior is identical whether
+or not a link exists.
+
+| Activity | Air-gapped | Connected (allowed if approved) |
+|----------|-----------|----------------------------------|
+| OS / Splunk install | Offline media only | Offline media only (do not pull "latest" mid-mission) |
+| Security patches | Carried on media | May pull **pinned** patches through the firewall to a staging host, re-checksum, then deploy |
+| App/TA updates | Carried on media | Pinned downloads only, via firewall, logged |
+| License | File on media | File on media (online activation only if the mission explicitly allows) |
+| Remote replication | n/a | Per [14-remote-replication-vpn.md](14-remote-replication-vpn.md) |
+| Time sync | chrony free-run / GPS | chrony to approved upstream |
+
+Rules:
+
+- No kit host reaches the internet directly; any egress is through the firewall with an
+  explicit allow rule and is logged.
+- Nothing installed mid-mission bypasses the checksum/manifest discipline: download to a
+  staging area, verify, update the manifest, then deploy.
+- Meraki-managed gear (if carried) inherently needs the cloud dashboard - using it is a
+  connected-mode decision, incompatible with air-gapped missions
+  ([02-hardware-bom.md](02-hardware-bom.md), [03-network-design.md](03-network-design.md)).
+
+## Integrity self-check
+
+The one runnable check this doc leaves behind: on both media drives, `sha256sum -c
+CHECKSUMS.sha256` must pass end-to-end, and the versions it covers must match
+`MANIFEST.yaml`. If either drive or the version match fails, the media is not mission-ready.
+
+</script>
+<script type="text/markdown" data-id="07-containerization" data-title="07 - Containerization (Docker)" data-group="Build" data-file="docs/07-containerization.md">
+# 07 - Containerization (Docker / Podman)
+
+An optional deployment style. Instead of installing every Splunk role on its own
+bare-metal host, you can run roles as containers. This speeds deployment (pull a known
+image, start it) and lets several roles share one physical host, cutting the number of
+machines the kit has to carry and power. Bare-metal remains fully supported and is still
+the right choice for the heaviest indexers; the two styles mix freely.
+
+This complements [05-splunk-deployment.md](05-splunk-deployment.md) (bare-metal install)
+and the colocation rules in [01-architecture.md](01-architecture.md#management-role-colocation).
+
+## Why containers in the kit
+
+- **Faster, repeatable deployment** - a role comes up from a pinned image in seconds, with
+  no OS-level install step. The image is the unit you validate at base and carry on the
+  offline media.
+- **Fewer physical hosts** - run multiple role-containers on one machine. For example, the
+  management host can run the **license manager, deployment server, monitoring console**,
+  and (on a separate host or the same one within resource limits) the **cluster manager**
+  as individual containers, consolidating what would otherwise be two or more laptops.
+- **Clean teardown** - stop and remove containers, wipe the mapped data volumes.
+
+## What Splunk supports
+
+- **Official images**: Splunk publishes Dockerfiles and the `splunk/splunk` (Enterprise)
+  and `splunk/universalforwarder` images via the **docker-splunk** project on GitHub. They
+  are Ansible-driven (Splunk's "splunk-ansible") and configured through environment
+  variables / a `default.yml`. Use these rather than rolling your own image.
+- **Orchestration**: the **Splunk Operator for Kubernetes** deploys single or distributed
+  Splunk Enterprise on Kubernetes. For a flyaway kit, full Kubernetes is usually more than
+  you need - plain Docker or Podman with a management UI is lighter. The Operator is noted
+  for completeness and for sites that already run k8s.
+- **Capacity still applies**: a containerized deployment must provide hardware resources
+  that **meet or exceed** the same reference capacity as bare metal. Containers package the
+  software; they do not reduce the CPU, RAM, or disk I/O a role needs.
+
+> Reference: Splunk's "Containerized computing platforms" and "Splunk Enterprise and
+> containerized infrastructures" in the
+> [system requirements](https://help.splunk.com/en/splunk-enterprise/get-started/install-and-upgrade/10.6/plan-your-splunk-enterprise-installation/system-requirements-for-use-of-splunk-enterprise-on-premises).
+
+## Which roles can be containerized
+
+| Role | Container? | Notes |
+| --- | --- | --- |
+| License manager, deployment server, monitoring console | Yes | Lightweight; good candidates to consolidate on one host |
+| Cluster manager | Yes | Still bound by its resource limits; keep it off the same container-set as the DS under load ([01](01-architecture.md#management-role-colocation)) |
+| Indexer / indexer cluster peer | Yes | Needs a **persistent, block-based** data volume on fast local NVMe; see [storage](#storage-and-persistence). NOT RECOMMENDED OR SUPPORTED for index clusters on the SAME physical host |
+| Search head / ES search head / SH cluster | Yes | Map `etc` and KV store to persistent volumes |
+| Heavy forwarder, HEC | Yes | Straightforward |
+| SC4S | **Yes - already a container** | SC4S is distributed as a container; this is its normal deployment ([05](05-splunk-deployment.md#sc4s-syslog)) |
+| **Splunk SOAR** | **No** | Splunk SOAR (On-premises) **cannot be installed inside a Docker or Podman container** - it runs on bare metal (RHEL-family). See [04](04-os-baseline.md#soar-os-constraints-verified-against-splunk-docs) |
+
+Other roles not listed can also run containerized for their intended purpose; the table
+above is the common set. The rule of thumb: **anything except SOAR can be a container**,
+and you choose per host whether to run it bare-metal or containerized.
+
+## Colocation with containers
+
+Running two roles as two containers on one physical host is a clean way to colocate - each
+role is isolated in its own container, but they share the machine. The **same colocation
+cautions from [01-architecture.md](01-architecture.md#management-role-colocation) still
+apply at the host level**: the cluster manager and deployment server both have strict
+resource limits, and stacking them (even in separate containers) on an overloaded host
+will hurt both. Set per-container CPU/memory limits and leave headroom for any indexer on
+the same host.
+
+Example consolidation (Small/Medium management host):
+
+```mermaid
+flowchart TB
+    subgraph host [One physical management host]
+        lm[LM container]
+        ds[DS container]
+        mc[MC container]
+        cm[CM container]
+    end
+    host --- vols[(Persistent volumes on host NVMe)]
+```
+
+## Management tools
+
+Manage the containers with whatever the team prefers - the kit is tool-agnostic:
+
+- **Portainer** - web UI for Docker/Podman; good for a quick visual of what's running.
+- **Dockhand** - lightweight compose-stack manager.
+- **docker compose** / **podman-compose** - declarative stack files, easy to carry and
+version.
+- **Podman + systemd (Quadlets)** - rootless containers managed as systemd units; aligns
+well with the hardening posture in [11-security.md](11-security.md).
+- Any other Docker-compatible management tool.
+
+Pick one and standardize so the runbooks are deterministic. A compose file per tier is the
+most portable option for an air-gapped kit.
+
+## Storage and persistence
+
+Containers are ephemeral; Splunk data must not be. Map persistent volumes on the host's
+fast local NVMe:
+
+- Indexer data (`/opt/splunk/var/lib/splunk`), `etc`, and KV store go on **host NVMe
+  volumes**, not inside the container layer.
+- **Do not** put hot/warm index buckets on NFS (Splunk supports only cold/frozen on NFS,
+  and never shared across a cluster). Use local block storage - exactly what the kit
+  desktops provide ([02](02-hardware-bom.md)).
+- The volume layout mirrors the bare-metal disk plan in
+  [04-os-baseline.md](04-os-baseline.md#disk-layout), so teardown wipe
+  ([10](10-runbook-teardown.md#phase-4--secure-wipe)) targets the same NVMe.
+
+## Networking
+
+- Put containers on the kit data VLAN using host networking, a macvlan, or a bridge with
+  the [ports matrix](03-network-design.md#splunk-ports-matrix) published. Keep the fixed
+  IP/hostname plan ([03](03-network-design.md#ip-and-hostname-plan)) - containers register
+  in kit DNS by the same names.
+- TLS, cluster `pass4SymmKey`, HEC tokens, and licensing are configured exactly as on bare
+  metal ([05](05-splunk-deployment.md), [11](11-security.md)).
+
+## Air-gapped image handling
+
+Containers fit the offline model ([06-offline-repo.md](06-offline-repo.md)):
+
+- At base, pull the pinned `splunk/splunk`, `splunk/universalforwarder`, SC4S, and
+  management-tool images, then export them with `docker save` (or `podman save`) to
+  tarballs on the offline media.
+- Add image names, tags/digests, and checksums to `MANIFEST.yaml` and `CHECKSUMS.sha256`.
+- On site, `docker load` / `podman load` from the media - no registry access needed.
+- Never pull `:latest` in the field; load the pinned digest you carried.
+
+## When to prefer bare metal
+
+- **Top-end indexers under sustained heavy load**, where squeezing maximum disk I/O and
+  CPU matters and you want the fewest layers between Splunk and the NVMe.
+- **SOAR** - required ([see above](#which-roles-can-be-containerized)).
+- When the team is more comfortable operating bare metal under time pressure - a flyaway
+  deployment is not the place to debug an unfamiliar container stack.
+
+## Validation
+
+Same gates as [08-runbook-deploy.md](08-runbook-deploy.md#phase-6--validation): the
+containerized instances must appear in the monitoring console, the cluster must report
+complete, and a synthetic event must be searchable through each ingest path. A container
+that restarts and loses its data volume is a failed persistence setup - verify volumes
+survive a `restart` before declaring the kit operational.
+
+> Automation hook (out of scope): a per-tier `compose` file set and an image-load script
+> would slot in here, driven by the same `MANIFEST.yaml` that the BOM and offline media use.
+
+</script>
+<script type="text/markdown" data-id="08-runbook-deploy" data-title="08 - Runbook: Deploy" data-group="Runbooks" data-file="docs/08-runbook-deploy.md">
+# 08 - Runbook: Rapid Deployment
+
+The on-site procedure to go from cases-closed to operational. Assumes hosts were imaged to
+the [OS baseline](04-os-baseline.md) at base and the offline media is verified. Work the
+steps in order; the order mirrors the Splunk install dependency chain.
+
+## Time target
+
+| Tier | Target (trained 2-person team, pre-imaged hosts) |
+|------|--------------------------------------------------|
+| Small | ~30-45 min |
+| Medium | ~60-90 min |
+| Large | ~2-3 hours |
+
+If hosts are **not** pre-imaged, add the OS build time from
+[04-os-baseline.md](04-os-baseline.md). Pre-imaging at base is strongly recommended.
+
+## Phase 0 - Physical and power (all tiers)
+
+1. Unpack network + power case first. Place the switch and firewall; connect the PDU to
+   the UPS, UPS to mains.
+2. Power on the **switch**, then the **firewall**. Confirm switch link lights.
+3. Unpack compute. Rack/place indexers (desktops) and lay out laptops.
+4. Cable every host to the switch per the VLAN color code
+   ([03-network-design.md](03-network-design.md)); label both ends.
+5. Power on hosts. Confirm each gets its static IP and is reachable.
+
+## Phase 1 - Network services
+
+1. Bring up `mgmt` services: DNS, DHCP (reserved range only), and NTP (chrony).
+2. Verify from another host: `nslookup idx01.kit.local`, `chronyc sources`, time within
+   tolerance on all hosts.
+3. Verify firewall default-deny is active and the mgmt VLAN can administer switch/fw.
+
+> Do not connect the site VLAN yet. Stand up the kit internally first, then integrate with
+> the org network per [13-site-integration.md](13-site-integration.md).
+
+## Phase 2 - Verify offline media
+
+On `mgmt`: `sha256sum -c CHECKSUMS.sha256` passes; versions match `MANIFEST.yaml`
+([06-offline-repo.md](06-offline-repo.md)). Confirm license not expired.
+
+## Phase 3 - Splunk core (follow install order)
+
+Per [05-splunk-deployment.md](05-splunk-deployment.md#install-order-all-tiers):
+
+1. **LM** up; license installed; note the `manager_uri`.
+2. **CM** up (M/L); cluster secret set; `replication_factor`/`search_factor` set.
+3. **Indexers** up; standalone receiving (S) or joined to cluster (M/L). For clusters:
+   `splunk apply cluster-bundle` on CM, then `splunk show cluster-status` = complete.
+4. **DS** up; serverclasses defined.
+5. **Search heads**: ES SH (all), ad-hoc SH (M opt), ES SHC + deployer (L).
+6. **MC** up; distributed mode; all instances added as peers; dashboards green.
+
+Checkpoint: every instance points at the LM; cluster is complete; ES SH lists all peers.
+
+## Phase 4 - Ingest
+
+1. Bring up HF/HEC and SC4S ([05](05-splunk-deployment.md#ingest-tier)).
+2. Confirm forwarder outputs reach indexers (9997) and HEC answers on 8088.
+3. Do **not** open to the site yet - test with a local synthetic event first (Phase 6).
+
+## Phase 5 - SOAR and AI
+
+1. SOAR on its RHEL-family host; connect its Splunk asset to the ES SH; wire ES notables
+   to SOAR if the mission uses automation.
+2. AI server (optional): deploy the harness + Splunk MCP server per
+   ([05](05-splunk-deployment.md#ai-server-optional)); confirm the data posture is allowed
+   for a non-local harness ([01](01-architecture.md#ai-server-optional)).
+
+## Phase 6 - Validation
+
+Run before declaring operational. Minimum gate:
+
+```spl
+| rest /services/server/info | table splunk_server, version
+```
+
+- **Cluster health** (M/L): `splunk show cluster-status` on CM = all peers up, RF/SF met.
+- **Peers visible**: on ES SH, Settings > Distributed search shows all indexers up.
+- **Ingest per path** - send one synthetic event through each path and confirm it is
+  searchable:
+
+```spl
+index=* earliest=-5m | stats count by index, sourcetype, host
+```
+
+  - Forwarder path: a UF/HF test event appears.
+  - HEC: `curl -k https://hf01.kit.local:8088/services/collector -H "Authorization: Splunk <token>" -d '{"event":"kit-hec-test"}'` then search for it.
+  - SC4S: send a test syslog line to `sc4s01` and confirm.
+- **MC**: all instances green, no missing-peer or replication alerts.
+- **Time**: `chronyc tracking` within tolerance on all hosts.
+- **ES**: loads; data models targeted at mission indexes populate.
+
+Record pass/fail for each on the arrival checklist
+([appendix-checklists.md](appendix-checklists.md#arrival--deployment)).
+
+## Phase 7 - Site integration
+
+Only after Phase 6 passes, connect the site VLAN and begin onboarding the org's data
+sources following [13-site-integration.md](13-site-integration.md). Optionally bring up
+remote replication ([14-remote-replication-vpn.md](14-remote-replication-vpn.md)).
+
+## If something fails
+
+Go to [09-runbook-operations.md](09-runbook-operations.md) for the common-failure table
+and degraded-mode operation. Do not proceed past a failed validation gate; a kit that
+silently drops data is worse than a kit that is late.
+
+</script>
+<script type="text/markdown" data-id="09-runbook-operations" data-title="09 - Runbook: Operations" data-group="Runbooks" data-file="docs/09-runbook-operations.md">
+# 09 - Runbook: Operations
+
+Keeping the kit healthy during a mission: what to watch, routine checks, common failures,
+and how the kit behaves (and what you do) when a node is lost. Field conditions - power,
+heat, bumps - make hardware failure the expected case, not the exception.
+
+## Daily operational checks
+
+Run each operational period (start of shift):
+
+1. **Monitoring console** - open the MC on `mgmt01`; confirm all instances green, no
+   skipped searches, no indexing latency alerts, no missing cluster peers.
+2. **Cluster status** (M/L): `splunk show cluster-status` on the CM - all peers up, RF and
+   SF met, no buckets fixing for long.
+3. **Ingest flowing** - per source:
+   ```spl
+   index=* earliest=-15m | stats count latest(_time) as last_seen by index, sourcetype
+   ```
+   Any expected source with `count=0` or a stale `last_seen` is investigated.
+4. **Disk headroom** - on every indexer, data volume < 80% used.
+5. **Time** - `chronyc tracking` within tolerance everywhere.
+6. **Power** - UPS load and runtime nominal; no host on battery unexpectedly.
+7. **Firewall** - review deny log for unexpected site traffic.
+
+## Key health searches
+
+```spl
+# Indexing latency (event time vs index time)
+index=_internal source=*metrics.log group=per_index_thruput
+| eval latency = _indextime - _time | stats avg(latency) max(latency) by series
+
+# Forwarder connectivity
+| rest /services/deployment/server/clients | table hostname, utsname, lastPhoneHomeTime
+
+# Skipped/queued searches (search head pressure)
+index=_internal sourcetype=scheduler status=skipped
+| stats count by savedsearch_name
+```
+
+## Common failures
+
+| Symptom | Likely cause | Action |
+|---------|-------------|--------|
+| Source shows `count=0` | Site FW rule missing, wrong index/sourcetype, UF not phoning home | Check [13](13-site-integration.md) FW rules; check DS serverclass; check `outputs.conf` |
+| Indexing latency rising | Indexer CPU/disk saturated, or a single hot source | Spread load; check [sizing](01-architecture.md#sizing-math); throttle noisy source |
+| Cluster "buckets fixing" | A peer restarted/returned | Normal short-term; if persistent, check peer disk/health |
+| MC shows peer missing | Host down, network, or splunkd stopped | Ping/SSH; `systemctl status Splunkd`; check switch port |
+| HEC 401/403 | Bad/disabled token | Reissue token; confirm `enableSSL` and port 8088 open |
+| SC4S not ingesting | Container down, device not pointed at it, FW | `podman ps`; confirm device syslog target; check 514/6514 |
+| Time skew | chrony lost source / drift | `chronyc sources`; re-point to kit NTP/GPS |
+| Disk nearly full | Retention too long for volume | Lower `frozenTimePeriodInSecs` or roll to frozen/export; see teardown |
+| License warning | Volume over daily quota / license near expiry | Check LM; reduce ingest or acknowledge; expiry is a pack-time check |
+
+## Degraded-mode operation
+
+### Losing an indexer
+
+- **Clustered (M/L, RF=2/SF=2):** the cluster tolerates **one** indexer loss with no data
+  loss and full searchability. The CM re-replicates buckets to restore RF/SF using the
+  survivors' headroom. Actions: confirm in `cluster-status` that fix-up is progressing;
+  watch disk on survivors (re-replication consumes space); bring up the cold-spare
+  indexer and join it to the cluster to restore full capacity. Losing a **second** indexer
+  before fix-up completes risks data loss - prioritize the spare.
+- **Standalone (Small):** that indexer's data is **unavailable** until restored; new data
+  routes to the surviving indexer if outputs list both. There is no automatic recovery -
+  this is the accepted trade for the Small tier's size. If survivability matters, deploy
+  Medium.
+
+### Losing a search head
+
+- **ES SHC (Large):** 3 members tolerate one loss; the captain re-elects automatically.
+  Analysts keep working via another member. Rejoin or replace the member.
+- **Single ES SH (S/M):** searching/ES is down until restored, but **ingestion and
+  indexing continue** - no data is lost, only analyst access. Restore from the host's
+  config (kept on offline media) or rebuild the SH and re-add peers.
+
+### Losing the management node
+
+- **LM down:** peers enter the license grace period and keep running; restore the LM
+  before the grace window closes.
+- **CM down (M/L):** the cluster keeps indexing and searching existing buckets, but
+  bucket fix-up and new-peer joins pause until the CM returns. Restore promptly; do not
+  make cluster changes while it is down.
+- **DS down:** forwarders keep running with their current apps; only new app pushes pause.
+- Because management roles are colocated on `mgmt` laptops (which have battery), a power
+  blip rarely takes them down - but keep their configs on offline media for fast rebuild.
+
+### Power loss
+
+Laptops ride through on battery. Desktops (indexers, SOAR, AI) depend on the UPS for a
+clean shutdown - if the UPS signals low battery, shut down indexers gracefully
+(`splunk stop`) to avoid bucket corruption. On power return, hosts auto-start Splunk
+(systemd boot-start) and the cluster self-heals; verify via Phase 6 validation
+([08](08-runbook-deploy.md#phase-6--validation)).
+
+## Routine maintenance
+
+- Watch indexer disk daily; adjust retention (`frozenTimePeriodInSecs`) before volumes
+  fill rather than after.
+- Keep an eye on skipped searches on the ES SH; disable unused accelerated data models.
+- Back up critical config (CM bundle, ES config, SOAR playbooks) to the offline media
+  periodically so a host rebuild is fast.
+- If connected, apply only pinned, checksummed patches per the connected-mode policy
+  ([06](06-offline-repo.md#connected-mode-policy)).
+
+</script>
+<script type="text/markdown" data-id="10-runbook-teardown" data-title="10 - Runbook: Teardown" data-group="Runbooks" data-file="docs/10-runbook-teardown.md">
+# 10 - Runbook: Teardown
+
+End-of-mission procedure: get the data out, hand off evidence, securely wipe, repack, and
+write the post-mission report. Teardown is where data is most at risk of being lost or
+leaked - work it as deliberately as deployment.
+
+## Order of operations
+
+1. Stop ingest.
+2. Export / preserve required data.
+3. Hand off (evidence / deliverables).
+4. Secure wipe.
+5. Repack and inventory.
+6. Post-mission report.
+
+Do not skip to wipe before export and a verified handoff. Confirm with the mission owner
+that the handoff is complete and acknowledged before any destructive step.
+
+## Phase 1 - Stop ingest
+
+1. Disconnect the site VLAN first so no new org data enters while you finalize.
+2. Stop site-facing inputs (HF/HEC/SC4S) and remote replication
+   ([14](14-remote-replication-vpn.md)).
+3. Let in-flight data drain to the indexers; confirm indexing latency returns to zero in
+   the MC.
+
+## Phase 2 - Export / preserve
+
+Pick the method the mission requires:
+
+- **Raw export (SPL):** export result sets or raw events for specific indexes/time ranges:
+  ```spl
+  index=mission_* earliest=0 latest=now | ...        # dump to CSV/JSON via UI export or
+  ```
+  or use `| outputcsv` / the REST export endpoint for scripted dumps.
+- **Bucket-level preservation (full fidelity):** copy the index buckets
+  (`$SPLUNK_DB/<index>/db|colddb`) for the mission indexes to the evidence drive. This
+  preserves raw + tsidx so the data can be re-ingested later for full search fidelity.
+- **Frozen archive:** roll relevant buckets to frozen and copy the frozen archive.
+- **Remote mirror (if used):** confirm the remote DC/cloud copy is complete and verified
+  ([14](14-remote-replication-vpn.md)) before wiping the local copy.
+
+Checksum everything you export (`sha256sum`) and record the hashes in the report.
+
+## Phase 3 - Handoff (evidence / deliverables)
+
+For IR missions, chain of custody is mandatory (see
+[11-security.md](11-security.md#data-handling-and-chain-of-custody)):
+
+- Record each exported artifact: index, time range, sha256, size, who exported it, when,
+  and the source kit host.
+- Transfer on an **encrypted** evidence drive; record who received it, when, and their
+  acknowledgement.
+- Keep the chain-of-custody form with the artifact; a copy goes in the mission report.
+- Do not wipe the kit until the recipient confirms the handoff is readable and complete.
+
+## Phase 4 - Secure wipe
+
+After a verified handoff, sanitize per the mission's data classification
+([11](11-security.md#data-classification)).
+
+- **Stop Splunk** on all hosts (`splunk stop`), then **stop SOAR**.
+- **Crypto-erase / secure-erase the data NVMe** (indexer data volumes, SOAR
+  `/opt/phantom`, SOAR PostgreSQL, SC4S spool, any export staging). If full-disk
+  encryption was used ([11](11-security.md)), destroying the key (crypto-erase) plus an
+  `nvme format`/`blkdiscard` is the fast, reliable path for NVMe; follow the mission's
+  sanitization standard (e.g. NIST 800-88 purge) for the required method and verification.
+- **Wipe network gear config** - reset the firewall and switch to a known clean baseline
+  so no site topology, VPN keys, or rules leak to the next mission.
+- **Rotate secrets** that were in use (cluster `pass4SymmKey`, HEC tokens, VPN keys,
+  admin passwords) so a captured artifact can't unlock a future deployment
+  ([11](11-security.md)).
+- Record the wipe method and verification per device in the report.
+
+> The OS disk layout keeps data on a separate volume
+> ([04](04-os-baseline.md#disk-layout)) specifically so this wipe targets the data volume
+> cleanly. Re-image OS volumes at base, not in the field, unless the classification
+> requires in-field OS wipe too.
+
+## Phase 5 - Repack and inventory
+
+1. Power down in reverse order (hosts, then firewall, then switch, then UPS).
+2. Inventory every item against the BOM ([02](02-hardware-bom.md)); note anything damaged,
+   failed, or consumed (spares used).
+3. Re-verify the **offline media** still passes `sha256sum -c` for the next mission, or
+   flag it for refresh at base.
+4. Repack to the foam layout; cables coiled and labeled.
+
+## Phase 6 - Post-mission report
+
+Capture while fresh:
+
+- Tier deployed, actual deploy time vs target, headcount.
+- Data sources onboarded and volumes seen (from the MC).
+- Failures/degraded events and how they were handled ([09](09-runbook-operations.md)).
+- Exports produced: artifacts, checksums, handoff acknowledgements.
+- Wipe/sanitization record per device.
+- Hardware issues, spares used, and resupply needed.
+- Lessons learned / changes to feed back into these docs and the kit manifest.
+
+A printable teardown checklist is in
+[appendix-checklists.md](appendix-checklists.md#teardown).
+
+</script>
+<script type="text/markdown" data-id="11-security" data-title="11 - Security &amp; Data Handling" data-group="Operate" data-file="docs/11-security.md">
+# 11 - Security and Data Handling
+
+The kit holds and transports potentially sensitive data on portable hardware into
+uncontrolled environments. This document covers host and Splunk hardening, TLS, secrets
+and VPN key handling, physical security, data classification, and chain of custody.
+
+## Threat model (brief)
+
+- **Loss or theft** of a laptop/desktop/drive in transit or on site -> full-disk
+  encryption and secure wipe are mandatory.
+- **Hostile / untrusted site network** -> the kit integrates through a firewall with
+  default-deny; it does not trust the org LAN.
+- **Data leakage between missions** -> teardown wipe and secret rotation prevent one
+  mission's data or keys from surviving into the next.
+- **Tampered media/supply** -> checksum/manifest discipline
+  ([06](06-offline-repo.md#integrity-self-check)).
+
+## Host hardening
+
+Builds on [04-os-baseline.md](04-os-baseline.md):
+
+- **Full-disk encryption** (LUKS) on every host, especially data volumes. Keys are not
+  stored on the same device; use a passphrase or an externally-carried key. Crypto-erase
+  at teardown destroys the key ([10](10-runbook-teardown.md#phase-4--secure-wipe)).
+- **SELinux enforcing**, **firewalld default-deny** per host, minimal package set.
+- Per-operator OS accounts; no shared logins; `sudo` logged and forwarded to Splunk
+  (`_audit`/`index=os`).
+- Disable USB mass storage auto-mount except the designated media/evidence drives.
+- BIOS/UEFI password and Secure Boot where supported.
+
+## Splunk hardening
+
+- **Change all default credentials** on first boot; no `changeme`/`admin:changeme`
+  survives Phase 3 of deploy.
+- **TLS everywhere** - Splunk Web (8000), splunkd/REST (8089), forwarder-to-indexer
+  (9997), HEC (8088), and inter-node management. Carry a kit CA on the offline media and
+  issue per-host certs; distribute the CA so clients validate. Avoid shipping the default
+  self-signed certs into production use.
+- **Role-based access** on the ES SH: analysts get analyst roles, not admin. Limit who
+  can touch the MC/CM/LM to admins ([Splunk guidance](https://help.splunk.com/en/splunk-enterprise/administer/monitor/10.6/configure-the-monitoring-console/which-instance-should-host-the-console)).
+- **pass4SymmKey** secrets (indexer cluster, SHC) are strong and unique per kit build,
+  stored only in `server.conf` (which lives on encrypted disk) and in the sealed secrets
+  record - never in this repo.
+- **HEC tokens** are generated at deploy, scoped to the minimum index/sourcetype, and
+  rotated at teardown. No tokens committed anywhere in plaintext.
+- Forward Splunk's own `_internal`/`_audit` so the kit audits itself.
+
+## TLS and secrets inventory
+
+Track every secret the kit uses so rotation at teardown is complete:
+
+| Secret | Where | Rotate at teardown? |
+|--------|-------|---------------------|
+| Full-disk encryption keys | Externally carried / passphrase | Yes (crypto-erase) |
+| Splunk admin passwords | Each instance | Yes |
+| Indexer cluster `pass4SymmKey` | CM + peers `server.conf` | Yes |
+| SHC `pass4SymmKey` | ES SHC members | Yes |
+| HEC tokens | HF/indexer inputs | Yes |
+| Kit CA + host private keys | mgmt / each host | Yes (reissue per build) |
+| VPN keys (IPsec PSK/certs, WireGuard keys) | Firewall / Headscale | Yes |
+| SOAR admin + DB creds | SOAR host | Yes |
+| Firewall/switch admin creds | Network gear | Yes |
+
+Keep a sealed, encrypted **secrets record** per mission (not in this repo). It is the
+authoritative list the teardown rotation step works from.
+
+## VPN key handling
+
+For remote replication ([14](14-remote-replication-vpn.md)):
+
+- **IPsec:** prefer certificate auth over a pre-shared key; if PSK, make it long and
+  unique per mission. Store on the firewall only.
+- **Headscale/WireGuard:** each node has its own keypair; the Headscale control server
+  holds node keys and ACLs. Pre-authvkeys are short-lived and single-use. Revoke nodes in
+  Headscale at teardown and rotate the control server's keys.
+- Treat the remote peer config as sensitive: it reveals the remote DC/cloud topology.
+  Wipe it from the firewall at teardown.
+
+## Physical security
+
+- Cases locked (and tamper-evident sealed for IR/evidence missions).
+- Hosts and drives inventoried by serial/asset tag ([02](02-hardware-bom.md)); the
+  inventory is checked at pack and at repack.
+- Evidence drives handled under chain of custody (below), stored separately from the
+  compute cases.
+- Never leave an unlocked, logged-in analyst session unattended on site.
+
+## Data classification
+
+Classify mission data on arrival; it drives retention, export, and wipe method:
+
+| Class | Examples | Handling |
+|-------|----------|----------|
+| Public / demo | Training data, synthetic | Standard wipe at teardown |
+| Internal | Operational logs, non-PII telemetry | Encrypted at rest + standard secure wipe |
+| Sensitive / PII | User data, customer logs | Encrypted; restricted access; purge-level wipe; documented export only |
+| Evidence | IR artifacts for legal/forensic use | Chain of custody; full-fidelity preservation; purge-level wipe after verified handoff |
+
+## Data handling and chain of custody
+
+For incident-response missions, treat captured data as potential evidence from the moment
+of collection:
+
+- Record collection: source, index, time range, who collected, when, and the kit host.
+- Preserve integrity: checksum (sha256) artifacts at export; prefer bucket-level or frozen
+  preservation for full fidelity ([10](10-runbook-teardown.md#phase-2--export--preserve)).
+- Document every transfer/handoff with recipient, time, and acknowledgement on the
+  chain-of-custody form.
+- Minimize copies; track every copy; destroy working copies at teardown after the
+  authoritative handoff is verified.
+- Keep the chain-of-custody form with the artifact and in the post-mission report.
+
+> This is operational guidance, not legal advice. For evidence that may be
+> used in legal proceedings, follow the organization's and jurisdiction's forensic
+> standards; they override anything here.
+
+## Connected-mode caution
+
+Going online expands the attack surface. Every egress is through the firewall with an
+explicit, logged allow rule; nothing bypasses the checksum/manifest discipline
+([06](06-offline-repo.md#connected-mode-policy)). Meraki-managed gear's cloud dependency
+is itself a connected-mode decision and must not be used on air-gapped or sensitive
+missions.
+
+</script>
+<script type="text/markdown" data-id="12-mission-profiles" data-title="12 - Mission Profiles" data-group="Operate" data-file="docs/12-mission-profiles.md">
+# 12 - Mission Profiles
+
+The kit is general-purpose. A mission profile is a preset - which tier, which apps/TAs,
+which indexes, and which operational emphasis - so the team loads the right content for
+the job instead of improvising on site. Profiles are additive on top of the kit base app.
+
+| Profile | Default tier | Emphasis |
+|---------|-------------|----------|
+| [Incident response / DFIR](#incident-response--dfir) | Medium | Fast collection, evidence integrity, ES correlation, SOAR |
+| [Tactical / disconnected ops](#tactical--disconnected-operations) | Small-Medium | Air-gap, resilience, low power/weight |
+| [Demo / training / workshop](#demo--training--workshop) | Small | Self-contained, repeatable, disposable data |
+
+## Incident response / DFIR
+
+**Goal:** stand up collection and analysis at a compromised or at-risk site quickly, with
+evidence handled defensibly.
+
+- **Tier:** Medium (cluster survives one indexer loss; ES + SOAR). Large if volume/
+  retention demand it.
+- **Indexes:** `mission_wineventlog`, `mission_sysmon`, `mission_edr`, `mission_firewall`,
+  `mission_proxy`, `mission_dns`, `mission_auth`, plus a catch-all `mission_misc`.
+- **Apps / TAs:** Enterprise Security; Splunk_TA_windows, Splunk_TA_microsoft_sysmon,
+  Splunk_TA_nix, the relevant EDR and firewall TAs; SOAR with IR playbooks.
+- **Ingestion:** UFs to live endpoints via the DS; HF for API sources (EDR/cloud); SC4S
+  for network/security device syslog; one-shot file upload / `oneshot` for collected
+  artifacts (triage images, exported logs).
+- **Emphasis:** chain of custody from first collection
+  ([11](11-security.md#data-handling-and-chain-of-custody)); full-fidelity preservation at
+  export ([10](10-runbook-teardown.md#phase-2--export--preserve)); ES notables -> SOAR for
+  repeatable response; tight RBAC so analysts can't alter evidence indexes.
+- **Teardown:** purge-level wipe after verified evidence handoff; rotate all secrets.
+
+## Tactical / disconnected operations
+
+**Goal:** monitoring where connectivity is poor or absent (field, disaster response,
+exercise), with resilience and minimal logistics.
+
+- **Tier:** Small or Medium depending on volume. Favor Medium's cluster if a node loss is
+  likely and data must survive.
+- **Indexes:** mission-specific - sensor/telemetry, comms logs, local infra, `mission_misc`.
+- **Apps / TAs:** only what the mission needs - keep the footprint small to save indexer
+  CPU and power. Dashboards for the specific watch; alerting tuned for an operator, not a
+  SOC.
+- **Ingestion:** mostly UF and SC4S from local systems; HEC for any local apps. Assume no
+  internet - everything comes off the offline media
+  ([06](06-offline-repo.md)).
+- **Emphasis:** air-gapped operation is the default; chrony/GPS time discipline for long
+  deployments ([03](03-network-design.md#kit-services-dns-dhcp-ntp)); power/weight economy
+  ([02](02-hardware-bom.md)); degraded-mode drills so one person can keep it running
+  ([09](09-runbook-operations.md#degraded-mode-operation)).
+- **Optional:** remote replication to a home DC/cloud **only if** an intermittent link
+  exists, using low-bandwidth scheduled export ([14](14-remote-replication-vpn.md)).
+
+## Demo / training / workshop
+
+**Goal:** a self-contained teaching or proof-of-value environment that sets up fast and
+resets cleanly.
+
+- **Tier:** Small (single analyst view; cluster not required).
+- **Indexes:** `demo_*` with pre-canned or synthetic data; short retention.
+- **Apps / TAs:** ES and a couple of representative TAs to show CIM/correlation; sample
+  dashboards; optionally SOAR to demo playbooks.
+- **Ingestion:** mostly pre-loaded sample data plus a live HEC/UF demo source.
+- **Emphasis:** repeatability (same build every time from the manifest), a fast reset
+  (re-load sample data, no evidence handling), and disposable data (standard wipe).
+- **Connectivity:** either mode; demos are a fine place to exercise connected-mode
+  features (Meraki dashboard, remote replication) without evidence risk.
+
+## Choosing and loading a profile
+
+1. Pick the profile and confirm the tier against expected daily volume and retention
+   ([01 sizing](01-architecture.md#sizing-math)).
+2. Ensure the profile's apps/TAs and sample data are on the offline media and in the
+   manifest ([06](06-offline-repo.md)).
+3. Create the profile's indexes (cluster bundle on M/L) and DS serverclasses mapping each
+   data source to its TA ([05](05-splunk-deployment.md)).
+4. Use the Flyaway Kit app concept ([15](15-flyaway-kit-app-concept.md)) to check off the
+   site's actual sources and confirm each required TA/UF is configured and reporting.
+
+> Profiles are presets, not hard limits. The general-purpose kit can mix elements (e.g. an
+> IR mission that also needs tactical air-gap discipline).
+
+</script>
+<script type="text/markdown" data-id="13-site-integration" data-title="13 - Site Integration" data-group="Connect" data-file="docs/13-site-integration.md">
+# 13 - Site Integration
+
+How the kit connects to the host organization's network and starts ingesting its data.
+The deploying team rarely knows the site in advance, so this document gives the connection
+models, a questionnaire to capture what they need to learn, the ingestion-path decision,
+and the exact firewall rules the org must open for each path.
+
+Do this only **after** the kit passes internal validation
+([08 Phase 6](08-runbook-deploy.md#phase-6--validation)). Stand the kit up on its own LAN
+first, then integrate.
+
+## Connection models
+
+Pick one based on the site's trust posture and what the org will allow.
+
+```mermaid
+flowchart LR
+    subgraph org [Org Network]
+        osrc[Sources]
+    end
+    subgraph kit [Flyaway Kit]
+        k[Indexers / SH]
+    end
+    osrc -->|"A: via firewall"| fwA[KitFirewall] --> k
+    osrc -->|"B: via dual-homed HF"| hf[HeavyForwarder] --> k
+    osrc -.->|"C: SPAN/TAP passive"| tap[TapToSC4S] --> k
+```
+
+| Model | How | Use when | Trade-off |
+|-------|-----|----------|-----------|
+| **A - Firewall uplink** | Kit firewall's site interface joins an org VLAN (routed or NAT); sources send to kit ingest through allow rules | Org can route traffic to the kit and will open rules | Cleanest segmentation; needs org firewall changes |
+| **B - Dual-homed HF** | One heavy forwarder has a NIC on the org network and a NIC on the kit data VLAN; it is the ONLY touchpoint | Org wants a single, auditable ingress host | HF is a choke point and a trust boundary - harden it ([11](11-security.md)) |
+| **C - Passive SPAN/TAP** | A span port / network tap feeds SC4S or an HF; the kit never transmits onto the org net | Strict no-touch / covert / read-only monitoring | Capture only; no UF management, no bidirectional sources |
+
+In all models the kit's **DHCP must not reach the org network**
+([03](03-network-design.md#kit-services-dns-dhcp-ntp)) and the kit does not act as a
+router for org traffic.
+
+## Site network questionnaire
+
+Fill this in before departure if possible, otherwise on arrival. It is the input to the
+ingestion-path decision and the firewall-rule request.
+
+**Addressing and routing**
+- Org IP ranges / VLANs in scope? Any overlap with the kit `10.73.0.0/16` plan?
+- Will the kit get a routed interface or NAT? Static IP assigned to the kit site NIC?
+- Gateway, and is inter-VLAN routing to the sources available?
+
+**Name resolution and time**
+- Internal DNS servers? Will the kit be allowed to query them (for host enrichment)?
+- Is an org NTP source required/available, or does the kit stay authoritative?
+
+**Egress and proxy**
+- Is any internet egress allowed (for connected mode)? Through a proxy? Proxy host/port/auth?
+- Firewall change process and approver - how long does a rule take?
+
+**Sources (the core of onboarding)**
+- Which data sources exist? (Windows/AD, Linux, network firewalls, proxies, DNS, EDR,
+  cloud/SaaS, applications, custom.) See the Flyaway Kit app concept
+  ([15](15-flyaway-kit-app-concept.md)) for the structured checklist.
+- For each: where does it live, how many hosts, approximate EPS/volume, and how is it
+  emitted today (agent, syslog, API)?
+- Existing Splunk/UF/forwarder infrastructure on site the kit should receive from or avoid
+  conflicting with?
+- Any cloud/API sources (need egress) vs. on-prem only?
+
+**Constraints**
+- Data classification / handling rules at this site ([11](11-security.md#data-classification))?
+- May the kit install UFs on org endpoints, or only receive what the org sends?
+- Any assets explicitly out of scope?
+
+## Ingestion-path decision
+
+Map each source type to a collection method. This drives which TA, which DS serverclass,
+and which firewall rule.
+
+| Source type | Method | Lands on | TA example |
+|-------------|--------|----------|-----------|
+| Windows / AD / Sysmon | UF (installed on hosts, managed by kit DS) | Indexers via 9997 | Splunk_TA_windows, Splunk_TA_microsoft_sysmon |
+| Linux / Unix | UF | Indexers via 9997 | Splunk_TA_nix |
+| Network / security devices (firewall, proxy, DNS appliances) | Syslog -> SC4S | SC4S -> indexers | SC4S source config + CIM |
+| EDR / SaaS / cloud (API) | HF modular/API input | HF -> indexers | vendor API TA (needs egress) |
+| Applications | HEC | HF/indexers via 8088 | app-specific |
+| Collected artifacts / one-off files | Upload / `oneshot` | Indexers | per data |
+
+Decision notes:
+- **UF** is preferred for managed endpoints: the kit DS pushes the TA and config
+  ([05](05-splunk-deployment.md#deployment-server-forwarder-management)); UFs point their
+  `outputs.conf` at the kit indexers.
+- **SC4S** is preferred over raw `udp://514` for syslog: it parses, sets sourcetype/index,
+  and is Splunk-supported.
+- **HF** is needed wherever an input requires code/credentials (API pulls) or routing.
+- **HEC** for app/cloud push with scoped tokens.
+
+## Firewall rules per path (what the org must open)
+
+Request the minimum. "Kit" = the kit's site-facing interface(s); ports from
+[03](03-network-design.md#splunk-ports-matrix).
+
+| Path | Source -> Destination | Port | Direction |
+|------|-----------------------|------|-----------|
+| UF -> indexers | Org endpoints -> kit indexers (or HF) | 9997/TCP | Org -> Kit |
+| UF mgmt (DS) | Org UFs -> kit DS | 8089/TCP | Org -> Kit |
+| Syslog -> SC4S | Devices -> kit SC4S | 514/UDP+TCP, 6514/TCP (TLS) | Org -> Kit |
+| HEC | App/cloud senders -> kit HF/indexers | 8088/TCP | Org -> Kit |
+| API pull (HF) | Kit HF -> SaaS/cloud API | 443/TCP | Kit -> Internet (via proxy if required) |
+| DNS enrichment (optional) | Kit -> org DNS | 53/UDP+TCP | Kit -> Org |
+
+Keep everything else denied. For model B (dual-homed HF), only the HF's org-side address
+appears in these rules - that single host is the whole attack/audit surface.
+
+## Validation after integration
+
+- Each onboarded source appears within minutes:
+  ```spl
+  index=* earliest=-15m | stats count latest(_time) as last_seen by index, sourcetype, host
+  ```
+- Sourcetypes are correct (not `*-too_small`/`syslog` catch-alls) and CIM-mapped for ES.
+- The Flyaway Kit app's per-source check turns green ([15](15-flyaway-kit-app-concept.md)).
+- No unexpected flows in the firewall deny log; no kit DHCP leaking to the org net.
+
+</script>
+<script type="text/markdown" data-id="14-remote-replication-vpn" data-title="14 - Remote Replication &amp; VPN" data-group="Connect" data-file="docs/14-remote-replication-vpn.md">
+# 14 - Remote Replication and VPN
+
+Optional. When a mission has a usable link, the kit can mirror some or all of its data to
+a remote data center or cloud so a copy survives even if the kit is lost, and so analysts
+back home can search it. This document covers the VPN transport options, the data
+mirroring options with bandwidth trade-offs, and how it ties into the firewall and
+security.
+
+This is a connected-mode feature. Air-gapped missions skip it entirely; the primary data
+path is always local ([06](06-offline-repo.md#connected-mode-policy)).
+
+## Transport options
+
+The replication traffic rides a VPN from the kit to the remote site, terminated on the kit
+firewall ([03](03-network-design.md#firewall-policy), VLAN 40).
+
+```mermaid
+flowchart LR
+    subgraph kit [Flyaway Kit]
+        idx[Indexers]
+        fw[KitFirewall]
+    end
+    subgraph remote [Remote DC / Cloud]
+        ridx[RemoteIndexers]
+        gw[VPNGateway / Headscale]
+    end
+    idx --> fw
+    fw <-->|"IPsec OR WireGuard mesh"| gw
+    gw --> ridx
+```
+
+### Option 1 - Site-to-site IPsec
+
+- Kit firewall (Cisco Secure Firewall 1210, default, or similar) builds an IPsec tunnel to a remote
+  VPN gateway: a corporate DC firewall, or a cloud VPN gateway (AWS VPN, Azure VPN
+  Gateway, GCP Cloud VPN).
+- Auth: certificate preferred, PSK acceptable if long/unique per mission
+  ([11](11-security.md#vpn-key-handling)).
+- Firewall ports on the VPN VLAN: IKE UDP/500, NAT-T UDP/4500, ESP.
+- **Meraki note:** if both ends are Meraki, Auto VPN simplifies setup - but Meraki needs
+  the cloud dashboard, so this is connected-mode only and not for air-gapped/sensitive
+  missions ([02](02-hardware-bom.md#firewall-reference)).
+
+### Option 2 - Self-hosted Headscale (WireGuard mesh)
+
+[Headscale](https://github.com/juanfont/headscale) is an open-source, self-hostable
+implementation of the Tailscale control server. It gives the kit a private WireGuard mesh
+without any third-party SaaS - which fits a sovereignty/air-gap-adjacent posture better
+than a commercial coordination service.
+
+- **Control server placement:**
+  - At the **remote DC/cloud** - the kit nodes (or the firewall) join the mesh and reach
+    the remote indexers over WireGuard. This is the remote-replication use.
+  - On the kit **management node** - when you only need to coordinate kit nodes among
+    themselves (e.g. an internal overlay); no remote dependency.
+- Each node has its own WireGuard keypair; the Headscale server holds node keys + ACLs.
+  Use short-lived single-use pre-auth keys to enroll nodes; revoke at teardown
+  ([11](11-security.md#vpn-key-handling)).
+- Firewall: WireGuard UDP (default 41641) plus the Headscale control/HTTPS port to the
+  control server.
+- Carry the Headscale binary/image and client packages on the offline media if used
+  ([06](06-offline-repo.md)).
+
+| Transport | Pro | Con | Best for |
+|-----------|-----|-----|----------|
+| IPsec | Standard, firewall-native, works with cloud VPN gateways | Per-peer config; NAT traversal can be fiddly | Fixed kit-to-DC/cloud link |
+| Headscale/WireGuard | Self-hosted, simple mesh, no SaaS, fast | You run the control server; newer tooling | Sovereign/multi-node overlays |
+
+## Data mirroring options
+
+How much data crosses the link - choose per available bandwidth. Estimate link demand
+before enabling; a saturated uplink will back-pressure indexing.
+
+### A - Forwarded clone (simplest)
+
+Clone the ingest stream: the kit forwarders (or indexers) send a second copy to the remote
+indexers via an additional `tcpout` group.
+
+```ini
+# outputs.conf on HF/indexers - add a cloned remote group
+[tcpout]
+defaultGroup = kit_idx
+
+[tcpout:kit_idx]
+server = idx01.kit.local:9997, idx02.kit.local:9997, idx03.kit.local:9997
+
+[tcpout:remote_idx]
+server = ridx01.remote.example:9997
+# cloned output: data goes to BOTH groups
+```
+
+```ini
+# inputs.conf - send a given input to both groups
+[monitor:///var/log/mission]
+_TCP_ROUTING = kit_idx, remote_idx
+```
+
+- **Bandwidth:** roughly the ingest rate you clone (post-parsing, compressed on the wire).
+  Mirroring all of a 100 GB/day stream needs ~10+ Mbps sustained; size to the subset you
+  clone.
+- **Pro:** simple, near-real-time, no cluster coupling. **Con:** remote is a separate copy,
+  not a cluster member; if the link drops, use `useACK` and queue/`maxQueueSize` so the HF
+  buffers and backfills rather than dropping.
+
+### B - Multisite indexer cluster (full fidelity, bandwidth-heavy)
+
+Make the remote indexers a second site of the kit's indexer cluster with site-aware
+replication/search factors.
+
+- **Pro:** remote site is a true cluster member; search affinity and site failover.
+- **Con:** replication (9887) between sites is **bandwidth- and latency-sensitive**; a thin
+  or jittery field link is a poor fit. Generally only for missions with a fat, stable link.
+- Set `site_replication_factor` / `site_search_factor` so the remote holds the copies you
+  want; expect replication traffic on the order of your ingest times the remote copy count.
+
+### C - Scheduled export (low-bandwidth / intermittent)
+
+For thin or intermittent links, don't stream - batch.
+
+- Periodically export the mission indexes' buckets or summary/CSV results and ship them
+  over the link when it's up (rsync-over-VPN, or scheduled `outputcsv`/report export).
+- **Pro:** tolerant of outages; you control exactly when the link is used. **Con:** not
+  real-time; the remote lags by the export interval.
+- Pairs well with tactical missions ([12](12-mission-profiles.md#tactical--disconnected-operations)).
+
+| Option | Bandwidth need | Latency | Link tolerance | Remote is... |
+|--------|----------------|---------|----------------|--------------|
+| A Forwarded clone | Moderate (= cloned ingest) | Near real-time | Buffers via ACK/queue | Separate copy |
+| B Multisite cluster | High (ingest x remote copies) | Real-time | Poor (needs stable link) | Cluster member |
+| C Scheduled export | Low, bursty | Interval lag | Excellent | Periodic archive |
+
+## Bandwidth planning
+
+```
+clone_mbps ~= cloned_GB_per_day * 8 * 1000 / 86400 * compression_factor
+            (compression_factor ~0.3-0.5 on the wire)
+```
+Example: cloning 50 GB/day -> `50*8*1000/86400 ~= 4.6 Mbps` raw, ~1.5-2.3 Mbps compressed
+sustained. Multisite adds replication overhead per remote copy. Always leave headroom so
+replication never starves local indexing.
+
+## Security and teardown
+
+- VPN keys/certs live on the firewall / Headscale server only, rotated at teardown
+  ([11](11-security.md#vpn-key-handling)); revoke Headscale nodes and reset the firewall
+  VPN config.
+- The remote peer config reveals remote topology - treat as sensitive, wipe at teardown.
+- If a remote mirror is the authoritative copy for evidence, confirm it is complete and
+  checksum-verified before wiping the local copy
+  ([10](10-runbook-teardown.md#phase-2--export--preserve)).
+
+## Validation
+
+- Tunnel up: ping/`reachability` to the remote indexers over the VPN VLAN only.
+- Option A: events appear on the remote indexers within seconds:
+  ```spl
+  index=mission_* | stats count by splunk_server
+  ```
+  (run on a remote search head) shows remote indexers accumulating.
+- Option B: `splunk show cluster-status` reports both sites healthy.
+- Option C: last export batch landed and checksums match.
+- Link not saturated: local indexing latency stays near zero in the MC
+  ([09](09-runbook-operations.md)).
+
+</script>
+<script type="text/markdown" data-id="15-flyaway-kit-app-concept" data-title="15 - Flyaway Kit App (Concept)" data-group="Connect" data-file="docs/15-flyaway-kit-app-concept.md">
+# 15 - Flyaway Kit App (Concept)
+
+> **Concept only - not built.** This document is a design for a Splunk app that would help
+> the team onboard an organization's data sources correctly and fast. It defines the
+> purpose, workflow, data model, wireframe, and validation logic so the app can be built
+> later. No code is delivered here.
+
+## Problem it solves
+
+On arrival the team must figure out, under time pressure, which of the org's data sources
+exist, which Splunk add-on (TA) and collection method each needs, where it should land,
+and whether it is actually reporting. Today that lives in people's heads and a
+[spreadsheet questionnaire](13-site-integration.md#site-network-questionnaire). The app
+turns that into a guided, checkable workflow with a live "is it working?" signal.
+
+## Workflow
+
+```mermaid
+flowchart LR
+    pick["1. Check off sources the org has"] --> map["2. App shows required TA + method + index"]
+    map --> stage["3. Confirm TA on media / DS serverclass"]
+    stage --> deploy["4. Deploy UF/HF/HEC/SC4S"]
+    deploy --> verify["5. Live validation search goes GREEN"]
+    verify --> cim["6. CIM / ES data model coverage shown"]
+```
+
+1. **Select sources.** The analyst checks off the source types the org has (from the
+   questionnaire): Windows/AD, Sysmon, Linux, firewalls, proxies, DNS, EDR, cloud/SaaS,
+   custom apps, etc.
+2. **App maps each source** to its required TA, collection method (UF / HF / HEC / SC4S),
+   the DS serverclass that should carry it, and the target index/sourcetype.
+3. **Staging check:** the app confirms the TA is present on the offline media / installed
+   on the DS, and that the serverclass exists.
+4. **Deploy** the collection per [13](13-site-integration.md#ingestion-path-decision).
+5. **Live validation:** a per-source saved search turns the row **green** when matching
+   data arrives at the right index/sourcetype, **amber** if partial (wrong sourcetype,
+   low volume), **red** if nothing.
+6. **CIM / ES coverage:** shows which CIM data models the onboarded sources populate, so
+   analysts know which ES content will work.
+
+## Data model (KV store)
+
+The app's state lives in a KV store collection so it is editable and searchable. Concept
+schema:
+
+```json
+// collection: flyaway_sources
+{
+  "source_key": "windows_security",      // stable id
+  "display_name": "Windows Security / AD",
+  "category": "endpoint",
+  "required_ta": "Splunk_TA_windows",
+  "ta_version": "<pinned>",
+  "method": "uf",                          // uf | hf | hec | sc4s | upload
+  "serverclass": "windows_sources",
+  "target_index": "mission_wineventlog",
+  "expected_sourcetypes": ["WinEventLog:Security","XmlWinEventLog:Security"],
+  "cim_models": ["Authentication","Change"],
+  "selected": true,                        // checked off by analyst
+  "status": "green",                       // green|amber|red|pending (computed)
+  "last_seen": "2026-11-18T14:05:00Z",
+  "notes": ""
+}
+```
+
+A second small collection `flyaway_site` holds the questionnaire answers
+([13](13-site-integration.md#site-network-questionnaire)) so the app has the site context
+(IP ranges, proxy, firewall process) in one place.
+
+A seed catalog ships with the app: the common source types pre-filled with their TA,
+method, and expected sourcetypes, so step 2 is a lookup, not data entry.
+
+## Validation logic (per source)
+
+Each source row's status is computed by a search like:
+
+```spl
+| tstats count latest(_time) as last_seen
+    where index=$target_index$ sourcetype IN ($expected_sourcetypes$) by sourcetype
+| eval status = case(
+    count > 0 AND now()-last_seen < 900, "green",
+    count > 0, "amber",
+    1=1, "red")
+```
+
+- **green:** data in the right index/sourcetype within the last 15 min.
+- **amber:** data exists but stale, or landing in an unexpected sourcetype.
+- **red:** nothing - check the firewall rule, serverclass, and UF phone-home
+  ([09](09-runbook-operations.md#common-failures)).
+
+A CIM-coverage view cross-checks `expected_sourcetypes` against the accelerated ES data
+models to show what correlation content will populate.
+
+## Wireframe
+
+```
++-----------------------------------------------------------------------+
+| Flyaway Kit - Data Source Onboarding            Tier: Medium  [Site v] |
++-----------------------------------------------------------------------+
+| [ Filter: all | endpoint | network | cloud | custom ]   [+ Add source]|
++-----+--------------------------+--------+----------+-------------------+
+| sel | Source                   | Method | Index    | Status            |
++-----+--------------------------+--------+----------+-------------------+
+| [x] | Windows Security / AD    | UF     | wineven..| GREEN  (12s ago)  |
+| [x] | Sysmon                   | UF     | sysmon   | AMBER  (wrong st) |
+| [x] | Palo Alto firewall       | SC4S   | firewall | RED    (no data)  |
+| [ ] | CrowdStrike EDR (API)    | HF     | edr      | --                |
+| [x] | Linux syslog             | UF     | nix      | GREEN  (5s ago)   |
++-----+--------------------------+--------+----------+-------------------+
+| CIM coverage: Authentication [OK]  Network Traffic [partial]  ...      |
++-----------------------------------------------------------------------+
+| Required TAs:  Splunk_TA_windows OK | Splunk_TA_nix OK | PA TA MISSING |
++-----------------------------------------------------------------------+
+```
+
+## How it ties into the kit
+
+- **Seed catalog** maps 1:1 to the DS serverclasses in
+  [05](05-splunk-deployment.md#deployment-server-forwarder-management) and the ingestion
+  paths in [13](13-site-integration.md#ingestion-path-decision).
+- **Required-TA check** reads against the offline media manifest
+  ([06](06-offline-repo.md#manifestyaml)) so a missing TA is caught before deploy.
+- **Status rows** reuse the operational validation searches
+  ([09](09-runbook-operations.md#key-health-searches)).
+
+## If/when it is built (out of scope now)
+
+- Package as a standard Splunk app (KV store collections + `transforms.conf` lookups + a
+  dashboard-studio or SimpleXML UI + the saved searches above).
+- Install on the ES SH (or ad-hoc SH).
+- Keep the seed catalog in version control alongside this repo so new source mappings are
+  reviewed and travel on the offline media.
+
+> This remains a concept. Building it is explicitly out of scope for this documentation
+> set ([README](../README.md#out-of-scope)).
+
+</script>
+<script type="text/markdown" data-id="appendix-checklists" data-title="Appendix - Checklists" data-group="Reference" data-file="docs/appendix-checklists.md">
+# Appendix - Checklists
+
+Printable, mission-agnostic checklists. Print and carry; initial each line. They
+summarize the runbooks - the detail lives in [08](08-runbook-deploy.md),
+[09](09-runbook-operations.md), and [10](10-runbook-teardown.md).
+
+## Pre-departure (at base)
+
+- [ ] Tier selected for expected daily volume and retention
+- [ ] All hosts imaged to the OS baseline ([04](04-os-baseline.md))
+- [ ] OS baseline self-check passed on every host (below)
+- [ ] Offline media refreshed; `MANIFEST.yaml` updated with pinned versions
+- [ ] `sha256sum -c CHECKSUMS.sha256` passes on BOTH media drives
+- [ ] License present and NOT near expiry
+- [ ] Required apps/TAs and mission profile content on media
+- [ ] Secrets record prepared (sealed/encrypted)
+- [ ] Hardware inventory by serial/asset tag complete; spares packed
+- [ ] Switch/firewall configs staged (Catalyst/Secure FW for air-gap; Meraki only if connected)
+- [ ] UPS charged; PDU, region power adapters, cables (10G-rated) labeled and packed
+- [ ] Printed runbooks + these checklists in the kit
+
+## OS baseline self-check (per host)
+
+- [ ] Hostname + static IP match the IP plan ([03](03-network-design.md))
+- [ ] THP disabled (`cat /sys/kernel/mm/transparent_hugepage/enabled` -> `[never]`)
+- [ ] ulimits for `splunk`: `nofile>=64000`, `nproc>=16000`
+- [ ] chrony synced (`chronyc tracking`)
+- [ ] `splunk` user + `/opt/splunk` volume present (`phantom` + `/opt/phantom` on SOAR)
+- [ ] firewalld active, default-deny, host's ports open
+- [ ] SELinux enforcing (`getenforce`)
+- [ ] Resolvable by name from `mgmt`
+
+## Arrival / deployment
+
+Phases per [08](08-runbook-deploy.md).
+
+- [ ] Phase 0: switch + firewall up; all hosts cabled, powered, reachable
+- [ ] Phase 1: DNS, DHCP (reserved range), NTP verified from a client
+- [ ] Phase 2: offline media verified on site; license not expired
+- [ ] Phase 3: LM -> CM -> indexers -> DS -> SHs -> MC up in order
+- [ ] Phase 3: cluster complete (`splunk show cluster-status`), RF/SF met (M/L)
+- [ ] Phase 3: ES SH lists all indexers as search peers
+- [ ] Phase 4: HF/HEC/SC4S up; outputs reach indexers
+- [ ] Phase 5: SOAR connected to ES SH; optional AI server harness + MCP up (data posture checked)
+- [ ] Phase 6 VALIDATION GATE - all must pass:
+  - [ ] `| rest /services/server/info` lists every instance at the right version
+  - [ ] Synthetic event searchable via forwarder path
+  - [ ] Synthetic event searchable via HEC
+  - [ ] Synthetic event searchable via SC4S syslog
+  - [ ] MC all green; no missing peers / replication alerts
+  - [ ] Time within tolerance on all hosts
+  - [ ] ES loads; targeted data models populate
+- [ ] Phase 7: site VLAN connected; onboarding started ([13](13-site-integration.md))
+- [ ] Remote replication up and verified if used ([14](14-remote-replication-vpn.md))
+
+## Daily operations (per shift)
+
+Per [09](09-runbook-operations.md).
+
+- [ ] MC all green; no skipped searches; no indexing latency alerts
+- [ ] Cluster status: peers up, RF/SF met (M/L)
+- [ ] Each expected source reporting within last 15 min
+- [ ] Every indexer data volume < 80% full
+- [ ] Time in sync everywhere
+- [ ] UPS load/runtime nominal; no host unexpectedly on battery
+- [ ] Firewall deny log reviewed for unexpected site traffic
+
+## Teardown
+
+Per [10](10-runbook-teardown.md). Do NOT wipe before export + verified handoff.
+
+- [ ] Site VLAN disconnected; ingest stopped; in-flight data drained
+- [ ] Required data exported; artifacts checksummed (sha256)
+- [ ] Remote mirror confirmed complete (if used)
+- [ ] Evidence handed off; chain-of-custody form signed/acknowledged
+- [ ] Handoff confirmed readable/complete by recipient
+- [ ] Secure wipe of all data volumes (method per classification)
+- [ ] Firewall + switch configs reset to clean baseline
+- [ ] All secrets rotated (cluster/SHC keys, HEC tokens, VPN keys, admin creds, FDE keys)
+- [ ] Wipe method + verification recorded per device
+- [ ] Hardware inventoried against BOM; damage/spares noted
+- [ ] Offline media re-verified or flagged for refresh
+- [ ] Repacked to foam; cables coiled/labeled
+- [ ] Post-mission report written ([10](10-runbook-teardown.md#phase-6--post-mission-report))
+
+</script>
+
+<script src="assets/marked.min.js"></script>
+<script src="assets/mermaid.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  // ---- Collect embedded docs ----
+  var docEls = Array.prototype.slice.call(document.querySelectorAll('script[type="text/markdown"]'));
+  var docs = docEls.map(function(el){
+    var file = el.getAttribute('data-file');
+    return {
+      id: el.getAttribute('data-id'),
+      title: el.getAttribute('data-title'),
+      group: el.getAttribute('data-group') || 'Documentation',
+      file: file,
+      base: file.split('/').pop().toLowerCase(),
+      md: el.textContent,
+      html: null,        // lazy-rendered
+      toc: null,
+      text: null         // plaintext for search
+    };
+  });
+  var byId = {}, byBase = {};
+  docs.forEach(function(d){ byId[d.id]=d; byBase[d.base]=d; });
+
+  // ---- Slug (GitHub-ish, collapses repeated hyphens so authored anchors resolve) ----
+  function slug(s){
+    return s.toLowerCase().trim()
+      .replace(/[^\w\s-]/g,'')
+      .replace(/\s+/g,'-')
+      .replace(/-+/g,'-')
+      .replace(/^-|-$/g,'');
+  }
+
+  // ---- Markdown -> plaintext (for search) ----
+  function toText(md){
+    return md.replace(/```[\s\S]*?```/g,' ')
+             .replace(/`[^`]*`/g,' ')
+             .replace(/[#>*_|\-\[\]()]/g,' ')
+             .replace(/\s+/g,' ').toLowerCase();
+  }
+
+  marked.setOptions({gfm:true, breaks:false, headerIds:false, mangle:false});
+
+  // ---- Render a doc's markdown to an HTML string + build TOC ----
+  function render(d){
+    if(d.html!==null) return;
+    var html = marked.parse(d.md);
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+
+    // Heading ids + anchor links + TOC
+    var used = {}, toc = [];
+    tmp.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(function(h){
+      var base = slug(h.textContent) || 'section';
+      var id = base, i=1;
+      while(used[id]){ id = base+'-'+(++i); }
+      used[id]=true; h.id=id;
+      if(h.tagName==='H2'||h.tagName==='H3'){
+        toc.push({level:h.tagName==='H2'?2:3, id:id, text:h.textContent});
+        var a=document.createElement('a');
+        a.className='anchor-link'; a.href='#'; a.textContent='#';
+        a.setAttribute('data-anchor',id);
+        h.appendChild(a);
+      }
+    });
+
+    // Code blocks: copy button; mermaid conversion
+    tmp.querySelectorAll('pre > code').forEach(function(code){
+      var pre = code.parentNode;
+      var cls = code.className||'';
+      if(/language-mermaid/.test(cls)){
+        var div=document.createElement('div');
+        div.className='mermaid';
+        div.setAttribute('data-src', code.textContent);
+        div.textContent = code.textContent;
+        pre.parentNode.replaceChild(div, pre);
+        return;
+      }
+      var btn=document.createElement('button');
+      btn.className='copy-btn'; btn.type='button'; btn.textContent='Copy';
+      pre.appendChild(btn);
+    });
+
+    // Tables: wrap for horizontal scroll
+    tmp.querySelectorAll('table').forEach(function(t){
+      var w=document.createElement('div'); w.className='table-wrap';
+      t.parentNode.insertBefore(w,t); w.appendChild(t);
+    });
+
+    // External links open in new tab
+    tmp.querySelectorAll('a[href]').forEach(function(a){
+      var href=a.getAttribute('href');
+      if(/^https?:\/\//i.test(href)){ a.target='_blank'; a.rel='noopener'; }
+    });
+
+    d.html = tmp.innerHTML;
+    d.toc = toc;
+  }
+
+  // ---- Build sidebar ----
+  var navList = document.getElementById('navList');
+  var groups = [];
+  docs.forEach(function(d){ if(groups.indexOf(d.group)<0) groups.push(d.group); });
+  groups.forEach(function(g){
+    var lbl=document.createElement('div'); lbl.className='nav-group-label'; lbl.textContent=g; navList.appendChild(lbl);
+    docs.filter(function(d){return d.group===g;}).forEach(function(d){
+      var item=document.createElement('a');
+      item.className='nav-item'; item.href='#/'+d.id; item.textContent=d.title;
+      item.setAttribute('data-id',d.id); d.navEl=item;
+      (function(docId){ item.addEventListener('click', function(ev){ ev.preventDefault(); navigate(docId, null); }); })(d.id);
+      navList.appendChild(item);
+      var sub=document.createElement('div'); sub.className='nav-sub'; sub.style.display='none';
+      d.subEl=sub; navList.appendChild(sub);
+    });
+  });
+
+  function buildSubnav(d){
+    var sub=d.subEl; sub.innerHTML='';
+    (d.toc||[]).forEach(function(t){
+      var a=document.createElement('a');
+      a.href='#/'+d.id+'/'+t.id; a.textContent=t.text;
+      if(t.level===3) a.className='h3';
+      a.addEventListener('click', function(ev){ ev.preventDefault(); navigate(d.id, t.id); });
+      sub.appendChild(a);
+    });
+  }
+
+  // ---- Content + routing ----
+  var content=document.getElementById('content');
+  var main=document.getElementById('main');
+  var current=null;
+
+  function showDoc(id, anchor, fromHash){
+    var d=byId[id]; if(!d) d=docs[0];
+    render(d);
+    if(current!==d){
+      content.innerHTML=d.html;
+      main.scrollTop=0;
+      current=d;
+      docs.forEach(function(x){
+        x.navEl.classList.toggle('active', x===d);
+        x.subEl.style.display = (x===d) ? 'block':'none';
+      });
+      buildSubnav(d);
+      renderMermaid();
+      addDocNav(d);
+      if(activeQuery) highlight(content, activeQuery);
+    }
+    if(anchor){
+      var target=document.getElementById(anchor) || document.getElementById(slug(anchor));
+      if(target){ target.scrollIntoView(); flash(target); }
+    } else if(!fromHash){ main.scrollTop=0; }
+    closeSidebar();
+  }
+
+  function addDocNav(d){
+    var idx=docs.indexOf(d);
+    var prev=docs[idx-1], next=docs[idx+1];
+    var nav=document.createElement('div'); nav.className='doc-nav';
+    nav.innerHTML =
+      '<a class="prev'+(prev?'':' disabled')+'" '+(prev?'href="#/'+prev.id+'"':'')+'>'+
+        '<span class="lbl">Previous</span><span class="ttl">'+(prev?esc(prev.title):'')+'</span></a>'+
+      '<a class="next'+(next?'':' disabled')+'" '+(next?'href="#/'+next.id+'"':'')+'>'+
+        '<span class="lbl">Next</span><span class="ttl">'+(next?esc(next.title):'')+'</span></a>';
+    var foot=document.createElement('div'); foot.className='kit-footnote';
+    foot.textContent='Generated from the Markdown sources in this repository. Edit the .md files and re-run tools/build-site.py to update this page.';
+    content.appendChild(nav); content.appendChild(foot);
+  }
+
+  function esc(s){return s.replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+  function flash(el){
+    el.style.transition='background .3s'; var o=el.style.background;
+    el.style.background='var(--mark)';
+    setTimeout(function(){el.style.background=o;},650);
+  }
+
+  // ---- Mermaid ----
+  var mermaidReady=false;
+  function initMermaid(){
+    if(typeof mermaid==='undefined') return false;
+    if(!mermaidReady){
+      mermaid.initialize({startOnLoad:false, securityLevel:'loose',
+        theme: document.documentElement.getAttribute('data-theme')==='light'?'default':'dark'});
+      mermaidReady=true;
+    }
+    return true;
+  }
+  function renderMermaid(){
+    if(!initMermaid()) return;
+    var nodes=content.querySelectorAll('.mermaid:not([data-processed])');
+    if(!nodes.length) return;
+    try{ mermaid.run({nodes:nodes}); }catch(e){ /* leave as code block */ }
+  }
+  function rerenderMermaidTheme(){
+    if(typeof mermaid==='undefined') return;
+    mermaidReady=false; initMermaid();
+    content.querySelectorAll('.mermaid').forEach(function(n){
+      var src=n.getAttribute('data-src'); if(src!=null){ n.removeAttribute('data-processed'); n.innerHTML=''; n.textContent=src; }
+    });
+    renderMermaid();
+  }
+
+  // ---- Link handling (cross-doc .md links + in-page anchors) ----
+  content.addEventListener('click', function(e){
+    var a=e.target.closest('a'); if(!a) return;
+    var href=a.getAttribute('href'); if(href==null) return;
+    if(a.classList.contains('anchor-link')){ e.preventDefault(); navigate(current.id, a.getAttribute('data-anchor')); return; }
+    if(/^https?:\/\//i.test(href)) return;            // external
+    if(href.charAt(0)==='#'){ e.preventDefault(); navigate(current.id, href.slice(1)); return; }
+    var m=href.match(/([^\/\\]+\.md)(?:#(.*))?$/i);
+    if(m){
+      e.preventDefault();
+      var d=byBase[m[1].toLowerCase()];
+      if(d) navigate(d.id, m[2]?slug(m[2]):null);
+    }
+  });
+
+  // ---- Copy buttons ----
+  content.addEventListener('click', function(e){
+    var b=e.target.closest('.copy-btn'); if(!b) return;
+    var code=b.parentNode.querySelector('code');
+    var txt=code?code.innerText:'';
+    navigator.clipboard && navigator.clipboard.writeText(txt).then(function(){
+      b.textContent='Copied'; b.classList.add('copied');
+      setTimeout(function(){b.textContent='Copy'; b.classList.remove('copied');},1200);
+    });
+  });
+
+  // ---- Navigation (direct; does not depend on hashchange firing) ----
+  function navigate(id, anchor){
+    showDoc(id, anchor, false);
+    var h='#/'+id+(anchor?('/'+anchor):'');
+    if(location.hash!==h){ try{ location.hash=h; }catch(e){} }  // keep URL in sync for bookmarks/back
+  }
+  function route(){
+    var h=location.hash.replace(/^#\/?/,'');
+    var parts=h.split('/');
+    var id=parts[0]||docs[0].id;
+    var anchor=parts[1]||null;
+    if(!byId[id]) id=docs[0].id;
+    showDoc(id, anchor, true);
+  }
+  // Back/forward support when the browser does fire hashchange; harmless no-op otherwise.
+  window.addEventListener('hashchange', route);
+
+  // ---- Search ----
+  var searchEl=document.getElementById('search');
+  var clearEl=document.getElementById('searchClear');
+  var noRes=document.getElementById('noResults');
+  var activeQuery='';
+  docs.forEach(function(d){ d.text=toText(d.md)+' '+d.title.toLowerCase(); });
+
+  function doSearch(){
+    var q=searchEl.value.trim().toLowerCase();
+    activeQuery=q.length>=2?q:'';
+    clearEl.style.display=q?'block':'none';
+    var any=false;
+    docs.forEach(function(d){
+      var match = !activeQuery || d.text.indexOf(activeQuery)>=0;
+      d.navEl.classList.toggle('hidden', !match);
+      if(d!==current) d.subEl.style.display='none';
+      if(match) any=true;
+    });
+    document.querySelectorAll('.nav-group-label').forEach(function(l){ l.style.display=''; });
+    noRes.style.display=any?'none':'block';
+    clearHighlights(content);
+    if(activeQuery) highlight(content, activeQuery);
+  }
+  searchEl.addEventListener('input', doSearch);
+  clearEl.addEventListener('click', function(){ searchEl.value=''; doSearch(); searchEl.focus(); });
+
+  function clearHighlights(root){
+    root.querySelectorAll('mark').forEach(function(m){
+      var t=document.createTextNode(m.textContent); m.parentNode.replaceChild(t,m);
+    });
+    root.normalize();
+  }
+  function highlight(root, q){
+    var walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode:function(n){
+        if(!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        var p=n.parentNode.nodeName;
+        if(p==='SCRIPT'||p==='STYLE'||p==='MARK') return NodeFilter.FILTER_REJECT;
+        if(n.parentNode.closest && n.parentNode.closest('.mermaid')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var nodes=[], n;
+    while((n=walker.nextNode())) nodes.push(n);
+    nodes.forEach(function(node){
+      var val=node.nodeValue, lc=val.toLowerCase(), idx=lc.indexOf(q);
+      if(idx<0) return;
+      var frag=document.createDocumentFragment(), last=0;
+      while(idx>=0){
+        if(idx>last) frag.appendChild(document.createTextNode(val.slice(last,idx)));
+        var m=document.createElement('mark'); m.textContent=val.slice(idx,idx+q.length); frag.appendChild(m);
+        last=idx+q.length; idx=lc.indexOf(q,last);
+      }
+      if(last<val.length) frag.appendChild(document.createTextNode(val.slice(last)));
+      node.parentNode.replaceChild(frag,node);
+    });
+  }
+
+  // ---- Theme ----
+  var themeBtn=document.getElementById('themeBtn');
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme',t);
+    try{ localStorage.setItem('fak-theme',t); }catch(e){}
+    rerenderMermaidTheme();
+  }
+  themeBtn.addEventListener('click', function(){
+    applyTheme(document.documentElement.getAttribute('data-theme')==='light'?'dark':'light');
+  });
+  (function(){ var saved; try{saved=localStorage.getItem('fak-theme');}catch(e){} if(saved) document.documentElement.setAttribute('data-theme',saved); })();
+
+  // ---- Print ----
+  document.getElementById('printBtn').addEventListener('click', function(){ window.print(); });
+
+  // ---- Mobile sidebar ----
+  var sidebar=document.getElementById('sidebar'), scrim=document.getElementById('scrim');
+  function closeSidebar(){ sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+  document.getElementById('menuBtn').addEventListener('click', function(){ sidebar.classList.toggle('open'); scrim.classList.toggle('show'); });
+  scrim.addEventListener('click', closeSidebar);
+
+  // ---- Go ----
+  route();
+})();
+</script>
+</body>
+</html>

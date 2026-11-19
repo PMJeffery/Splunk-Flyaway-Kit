@@ -1,0 +1,12 @@
+# Local doc editor and build tooling - not published
+tools/
+
+# Python caches / bytecode
+__pycache__/
+*.pyc
+
+# Editor backups (doc-editor.py writes .bak before overwriting)
+*.bak
+
+# Packaged copy of the docs
+Splunk-Flyaway-Kit-Docs.zip
