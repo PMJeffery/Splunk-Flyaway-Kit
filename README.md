@@ -1,5 +1,7 @@
 # Splunk Flyaway Kit
 
+![Splunk Flyaway Kit - ruggedized laptops, desktops, switch, firewall, and UPS in a hard transit case](assets/flyaway-kit.png)
+
 A portable, rapidly deployable Splunk Enterprise environment built from ruggedized
 laptops and small-form-factor desktop PCs running Linux. The kit is designed to be
 carried to a site, powered on, networked, and ingesting data within a short, repeatable
@@ -48,6 +50,28 @@ Every procedure supports both:
 - **Connected / intermittent** - optional online updates and optional remote data
   replication over a site-to-site VPN or a self-hosted Headscale mesh. See
   [docs/14-remote-replication-vpn.md](docs/14-remote-replication-vpn.md).
+
+## Architecture at a glance
+
+The same role map is used on every mission; only the node count changes per tier. Desktops
+index (CPU + NVMe); laptops search, manage, and ingest. Full details and per-tier
+topologies are in [docs/01-architecture.md](docs/01-architecture.md).
+
+```mermaid
+flowchart LR
+    orgNet[Org Network] -->|site-facing VLAN| fw[Kit Firewall]
+    remote[Remote DC or Cloud] <-->|"IPsec / WireGuard"| fw
+    fw --> kitLan
+    subgraph kitLan [Kit LAN - 10GbE switch]
+        ingest["Ingest: HF / SC4S / HEC"] --> idx[Indexer tier]
+        esSh[ES Search Head] --> idx
+        soar[SOAR] <--> esSh
+        ai[AI Server - optional] <--> esSh
+        mgmt["Mgmt: LM, CM, DS, MC, DNS/DHCP/NTP, tokens"] -.-> idx
+        mgmt -.-> esSh
+        mgmt -.-> ingest
+    end
+```
 
 ## Document map
 
