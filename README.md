@@ -53,24 +53,36 @@ Every procedure supports both:
 
 ## Architecture at a glance
 
-The same role map is used on every mission; only the node count changes per tier. Desktops
-index (CPU + NVMe); laptops search, manage, and ingest. Full details and per-tier
-topologies are in [docs/01-architecture.md](docs/01-architecture.md).
+The diagram below is an illustrative example of a **Medium-tier** deployment (~7-10 hosts,
+50-300 GB/day) - the default field setup: a 3-peer indexer cluster (RF=2/SF=2), a dedicated
+ES search head, split management hosts, and optional SOAR and AI server. Desktops index
+(CPU + NVMe); laptops search, manage, and ingest. Node count is the main thing that changes
+between tiers - see [docs/01-architecture.md](docs/01-architecture.md) for the Small and
+Large topologies and the sizing math.
 
 ```mermaid
-flowchart LR
-    orgNet[Org Network] -->|site-facing VLAN| fw[Kit Firewall]
-    remote[Remote DC or Cloud] <-->|"IPsec / WireGuard"| fw
-    fw --> kitLan
-    subgraph kitLan [Kit LAN - 10GbE switch]
-        ingest["Ingest: HF / SC4S / HEC"] --> idx[Indexer tier]
-        esSh[ES Search Head] --> idx
-        soar[SOAR] <--> esSh
-        ai[AI Server - optional] <--> esSh
-        mgmt["Mgmt: LM, CM, DS, MC, DNS/DHCP/NTP, tokens"] -.-> idx
-        mgmt -.-> esSh
-        mgmt -.-> ingest
+flowchart TD
+    orgNet[Org Network] -->|"site-facing VLAN"| fw[Kit Firewall]
+    fw --> hf01
+    fw --> sc4s01
+    subgraph ingest [Ingest]
+        hf01["hf01: HF + HEC"]
+        sc4s01["sc4s01: SC4S syslog"]
     end
+    subgraph idxCluster ["Indexer cluster - RF=2 / SF=2"]
+        idx01[idx01]
+        idx02[idx02]
+        idx03[idx03]
+    end
+    hf01 --> idxCluster
+    sc4s01 --> idxCluster
+    es01["es01: ES search head"] --> idxCluster
+    sh01["sh01: ad-hoc SH (optional)"] --> idxCluster
+    mgmt01["mgmt01: CM + LM + MC"] --> idxCluster
+    mgmt02["mgmt02: DS + DNS/DHCP/NTP"] -.-> es01
+    mgmt02 -.-> hf01
+    soar01["soar01: SOAR"] <--> es01
+    ai01["ai01: AI server (optional)"] <--> es01
 ```
 
 ## Document map
